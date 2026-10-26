@@ -57,7 +57,10 @@ CI 在 Python 3.9 与 3.13 上跑全部用例，按四层组织：
 
 每局评测的完整转录都可以渲染成动画，便于直观分析 Agent 的走子风格：
 
-![demo](demo-best-episode.gif)
+| GIF | Agent | 单局成绩 |
+|---|---|---|
+| ![heuristic demo](demo-best-episode.gif) | heuristic | 1142 分（seed 2027） |
+| ![qwen demo](demo-qwen-best.gif) | qwen3.7-plus（LLM） | 862 分（seed 2025，87 步 / 37 行 / combo 7） |
 
 - `blockblast gif <episode.json>` — 导出 GIF 动图：琥珀色 = 新落子，白色闪烁 = 消除行列，底部 HUD 显示步数/得分/combo。**纯标准库实现**（内置 GIF89a + LZW 编码器，`gifenc.py` 约 150 行），不引入任何图像依赖；编码正确性在测试中用 Pillow 做像素级解码校验。
 - `blockblast watch <episode.json>` — 终端内 ANSI 动画回放，适合快速翻看。
@@ -72,7 +75,7 @@ CI 在 Python 3.9 与 3.13 上跑全部用例，按四层组织：
 
 被测 LLM 的成绩落在这个梯度的哪个位置，直观反映其空间规划能力：**不如 random = 连合法放置都难以维持；超过 greedy = 具备一步收益规划；逼近 heuristic = 有板面形状管理意识**。
 
-早期 LLM 实测参考（推理模型 qwen3.7-plus 单完整局：540 分 / 28 步 / 11 行 / 0 非法步，已超过 greedy 均值并逼近 heuristic；每步消行率 37% vs greedy 27%）。更多模型成绩见 `results/leaderboard.md`。
+**LLM 实测**（qwen3.7-plus，同种子集 10 局，2026-10-26）：mean 286.9 / median 246 / **max 862**（87 步、37 行、combo 7，单局超过 heuristic 均值），mean_moves 32.1，best_combo 7，invalid_per_move 0.0125——**已超过 greedy 基线，位居排行榜第 2**。决策分析：单步效率 0.954、消行机会把握 125/130 = 96%。其中 6 局被端点网络故障（读超时 / TLS 连接被掐断）截断，`--resume` 可从断点续跑补完；被截断的局也计入部分分数。
 
 ## 游戏规则（忠实复刻）
 

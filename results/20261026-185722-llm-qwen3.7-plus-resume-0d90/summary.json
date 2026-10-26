@@ -1,0 +1,263 @@
+{
+  "run_id": "20261026-185722-llm-qwen3.7-plus-resume-0d90",
+  "agent": "llm",
+  "model": "qwen3.7-plus",
+  "episodes": 10,
+  "seed_base": 2024,
+  "seeds": [
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033
+  ],
+  "scoring": {
+    "points_per_cell": 1,
+    "points_per_line": 10,
+    "multi_line_progressive": true,
+    "combo_step": 0.5,
+    "combo_cap": 4.0,
+    "perfect_clear_bonus": 300
+  },
+  "started_at": "2026-10-26T18:57:22",
+  "aggregates": {
+    "episodes": 10,
+    "mean_score": 286.9,
+    "median_score": 246.0,
+    "max_score": 862,
+    "min_score": 0,
+    "stdev_score": 270.9,
+    "mean_moves": 32.1,
+    "total_moves": 321,
+    "mean_lines": 12.9,
+    "total_lines": 129,
+    "best_combo": 7,
+    "perfect_clears": 0,
+    "invalid_total": 4,
+    "invalid_per_move": 0.0125,
+    "valid_completion_rate": 0.4,
+    "tokens_per_move": 7549.9,
+    "reasons": {
+      "board_full": 4,
+      "agent_error": 6
+    },
+    "mean_duration_s": 6355.27
+  },
+  "episodes_detail": [
+    {
+      "seed": 2024,
+      "score": 123,
+      "moves": 17,
+      "lines_cleared": 5,
+      "max_combo": 1,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 3810.85,
+      "agent_stats": {
+        "requests": 17,
+        "network_errors": 8,
+        "parse_errors": 0,
+        "prompt_tokens": 9370,
+        "completion_tokens": 111437,
+        "total_tokens": 120807,
+        "latency_s": 1808.0989175429997
+      },
+      "error": ""
+    },
+    {
+      "seed": 2025,
+      "score": 862,
+      "moves": 87,
+      "lines_cleared": 37,
+      "max_combo": 7,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 15593.88,
+      "agent_stats": {
+        "requests": 87,
+        "network_errors": 27,
+        "parse_errors": 0,
+        "prompt_tokens": 47690,
+        "completion_tokens": 605726,
+        "total_tokens": 653416,
+        "latency_s": 9949.341270420002
+      },
+      "error": ""
+    },
+    {
+      "seed": 2026,
+      "score": 562,
+      "moves": 59,
+      "lines_cleared": 25,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 2,
+      "reason": "board_full",
+      "duration_s": 14260.72,
+      "agent_stats": {
+        "requests": 61,
+        "network_errors": 30,
+        "parse_errors": 0,
+        "prompt_tokens": 33724,
+        "completion_tokens": 494889,
+        "total_tokens": 528613,
+        "latency_s": 8099.906920954997
+      },
+      "error": ""
+    },
+    {
+      "seed": 2027,
+      "score": 333,
+      "moves": 38,
+      "lines_cleared": 15,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 7127.584,
+      "agent_stats": {
+        "requests": 38,
+        "network_errors": 16,
+        "parse_errors": 0,
+        "prompt_tokens": 20785,
+        "completion_tokens": 236432,
+        "total_tokens": 257217,
+        "latency_s": 3839.927287708001
+      },
+      "error": ""
+    },
+    {
+      "seed": 2028,
+      "score": 497,
+      "moves": 60,
+      "lines_cleared": 24,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "agent_error",
+      "duration_s": 10065.799,
+      "agent_stats": {
+        "requests": 60,
+        "network_errors": 28,
+        "parse_errors": 0,
+        "prompt_tokens": 32862,
+        "completion_tokens": 380225,
+        "total_tokens": 413087,
+        "latency_s": 6330.291
+      },
+      "error": "network failure after 6 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>"
+    },
+    {
+      "seed": 2029,
+      "score": 291,
+      "moves": 33,
+      "lines_cleared": 14,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "agent_error",
+      "duration_s": 6745.981,
+      "agent_stats": {
+        "requests": 33,
+        "network_errors": 23,
+        "parse_errors": 0,
+        "prompt_tokens": 18078,
+        "completion_tokens": 259455,
+        "total_tokens": 277533,
+        "latency_s": 4223.211
+      },
+      "error": "network failure after 6 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>"
+    },
+    {
+      "seed": 2030,
+      "score": 201,
+      "moves": 27,
+      "lines_cleared": 9,
+      "max_combo": 1,
+      "perfect_clears": 0,
+      "invalid_actions": 2,
+      "reason": "agent_error",
+      "duration_s": 5394.978,
+      "agent_stats": {
+        "requests": 29,
+        "network_errors": 20,
+        "parse_errors": 0,
+        "prompt_tokens": 15962,
+        "completion_tokens": 156896,
+        "total_tokens": 172858,
+        "latency_s": 2554.551
+      },
+      "error": "network failure after 6 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>"
+    },
+    {
+      "seed": 2031,
+      "score": 0,
+      "moves": 0,
+      "lines_cleared": 0,
+      "max_combo": 0,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "agent_error",
+      "duration_s": 184.313,
+      "agent_stats": {
+        "requests": 0,
+        "network_errors": 12,
+        "parse_errors": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "latency_s": 0.0
+      },
+      "error": "network failure after 6 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>"
+    },
+    {
+      "seed": 2032,
+      "score": 0,
+      "moves": 0,
+      "lines_cleared": 0,
+      "max_combo": 0,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "agent_error",
+      "duration_s": 184.314,
+      "agent_stats": {
+        "requests": 0,
+        "network_errors": 12,
+        "parse_errors": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "latency_s": 0.0
+      },
+      "error": "network failure after 6 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>"
+    },
+    {
+      "seed": 2033,
+      "score": 0,
+      "moves": 0,
+      "lines_cleared": 0,
+      "max_combo": 0,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "agent_error",
+      "duration_s": 184.294,
+      "agent_stats": {
+        "requests": 0,
+        "network_errors": 12,
+        "parse_errors": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "latency_s": 0.0
+      },
+      "error": "network failure after 6 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>"
+    }
+  ]
+}
