@@ -41,13 +41,28 @@
   <h2>排行榜</h2>
   <table>
     <tr><th>#</th><th>Agent</th><th>Model</th><th>Eps</th><th>Mean</th><th>Median</th><th>Max</th><th>Moves</th><th>Lines</th><th>Combo</th><th>Inv/mv</th><th>Tok/mv</th></tr>
-    <tr><td>1</td><td>heuristic</td><td>–</td><td>10</td><td><b>586.9</b></td><td>513.0</td><td>1142</td><td>64.0</td><td>26.9</td><td>4</td><td>0.000</td><td>–</td></tr><tr><td>2</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>3</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>4</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>5</td><td>greedy</td><td>–</td><td>10</td><td><b>169.3</b></td><td>151.5</td><td>358</td><td>24.7</td><td>6.7</td><td>4</td><td>0.000</td><td>–</td></tr><tr><td>6</td><td>llm</td><td>qwen3.7-plus</td><td>3</td><td><b>98.3</b></td><td>114.0</td><td>137</td><td>11.7</td><td>4.3</td><td>2</td><td>0.029</td><td>5912.6</td></tr><tr><td>7</td><td>random</td><td>–</td><td>10</td><td><b>56.9</b></td><td>55.5</td><td>94</td><td>13.3</td><td>0.9</td><td>1</td><td>0.000</td><td>–</td></tr><tr><td>8</td><td>llm</td><td>GLM-5.3</td><td>3</td><td><b>25.7</b></td><td>25.0</td><td>47</td><td>3.0</td><td>1.0</td><td>2</td><td>0.000</td><td>4128.1</td></tr>
+    <tr><td>1</td><td>beam</td><td>–</td><td>10</td><td><b>2031.2</b></td><td>1627.0</td><td>6141</td><td>200.0</td><td>94.5</td><td>4</td><td>0.000</td><td>–</td></tr><tr><td>2</td><td>heuristic</td><td>–</td><td>10</td><td><b>586.9</b></td><td>513.0</td><td>1142</td><td>64.0</td><td>26.9</td><td>4</td><td>0.000</td><td>–</td></tr><tr><td>3</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>4</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>5</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>6</td><td>greedy</td><td>–</td><td>10</td><td><b>169.3</b></td><td>151.5</td><td>358</td><td>24.7</td><td>6.7</td><td>4</td><td>0.000</td><td>–</td></tr><tr><td>7</td><td>llm</td><td>qwen3.7-plus</td><td>3</td><td><b>98.3</b></td><td>114.0</td><td>137</td><td>11.7</td><td>4.3</td><td>2</td><td>0.029</td><td>5912.6</td></tr><tr><td>8</td><td>random</td><td>–</td><td>10</td><td><b>56.9</b></td><td>55.5</td><td>94</td><td>13.3</td><td>0.9</td><td>1</td><td>0.000</td><td>–</td></tr><tr><td>9</td><td>llm</td><td>GLM-5.3</td><td>3</td><td><b>25.7</b></td><td>25.0</td><td>47</td><td>3.0</td><td>1.0</td><td>2</td><td>0.000</td><td>4128.1</td></tr>
   </table>
 
   <h2>各 run 画像</h2>
   
 <section class="card">
-  <h3>#1 heuristic</h3>
+  <h3>#1 beam</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>2031.2</span>均分</div>
+    <div class="kpi"><span>6141</span>最佳</div>
+    <div class="kpi"><span>200.0</span>步数</div>
+    <div class="kpi"><span>94.5</span>消行</div>
+    <div class="kpi"><span>4</span>最高combo</div>
+    
+    <div class="kpi"><span>0.815</span>决策效率</div>
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="68.9" width="43.8" height="7.1" rx="1.5" fill="#4c8dff"/><text x="23.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">603</text><rect x="47.8" y="64.9" width="43.8" height="11.1" rx="1.5" fill="#4c8dff"/><text x="69.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">949</text><rect x="93.6" y="44.5" width="43.8" height="31.5" rx="1.5" fill="#4c8dff"/><text x="115.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">2684</text><rect x="139.4" y="4.0" width="43.8" height="72.0" rx="1.5" fill="#4c8dff"/><text x="161.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">6141</text><rect x="185.2" y="59.5" width="43.8" height="16.5" rx="1.5" fill="#4c8dff"/><text x="207.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">1411</text><rect x="231.0" y="46.0" width="43.8" height="30.0" rx="1.5" fill="#4c8dff"/><text x="252.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">2563</text><rect x="276.8" y="72.0" width="43.8" height="4.0" rx="1.5" fill="#4c8dff"/><text x="298.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">343</text><rect x="322.6" y="60.9" width="43.8" height="15.1" rx="1.5" fill="#4c8dff"/><text x="344.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">1286</text><rect x="368.4" y="46.8" width="43.8" height="29.2" rx="1.5" fill="#4c8dff"/><text x="390.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">2489</text><rect x="414.2" y="54.4" width="43.8" height="21.6" rx="1.5" fill="#4c8dff"/><text x="436.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">1843</text></svg>
+  <p class="meta">run <code>20261026-222707-beam-beam-v1-ed06</code> · 10 局 · 种子 2024…2033
+    · 完整终局率 <b>100%</b></p>
+</section>
+<section class="card">
+  <h3>#2 heuristic</h3>
   <div class="kpis">
     <div class="kpi big"><span>586.9</span>均分</div>
     <div class="kpi"><span>1142</span>最佳</div>
@@ -62,7 +77,7 @@
     · 完整终局率 <b>100%</b></p>
 </section>
 <section class="card">
-  <h3>#2 llm · qwen3.7-plus</h3>
+  <h3>#3 llm · qwen3.7-plus</h3>
   <div class="kpis">
     <div class="kpi big"><span>286.9</span>均分</div>
     <div class="kpi"><span>862</span>最佳</div>
@@ -77,7 +92,7 @@
     · 完整终局率 <b>40%</b></p>
 </section>
 <section class="card">
-  <h3>#3 llm · qwen3.7-plus</h3>
+  <h3>#4 llm · qwen3.7-plus</h3>
   <div class="kpis">
     <div class="kpi big"><span>286.9</span>均分</div>
     <div class="kpi"><span>862</span>最佳</div>
@@ -92,7 +107,7 @@
     · 完整终局率 <b>40%</b></p>
 </section>
 <section class="card">
-  <h3>#4 llm · qwen3.7-plus</h3>
+  <h3>#5 llm · qwen3.7-plus</h3>
   <div class="kpis">
     <div class="kpi big"><span>286.9</span>均分</div>
     <div class="kpi"><span>862</span>最佳</div>
@@ -107,7 +122,7 @@
     · 完整终局率 <b>40%</b></p>
 </section>
 <section class="card">
-  <h3>#5 greedy</h3>
+  <h3>#6 greedy</h3>
   <div class="kpis">
     <div class="kpi big"><span>169.3</span>均分</div>
     <div class="kpi"><span>358</span>最佳</div>
@@ -122,7 +137,7 @@
     · 完整终局率 <b>100%</b></p>
 </section>
 <section class="card">
-  <h3>#6 llm · qwen3.7-plus</h3>
+  <h3>#7 llm · qwen3.7-plus</h3>
   <div class="kpis">
     <div class="kpi big"><span>98.3</span>均分</div>
     <div class="kpi"><span>137</span>最佳</div>
@@ -137,7 +152,7 @@
     · 完整终局率 <b>0%</b></p>
 </section>
 <section class="card">
-  <h3>#7 random</h3>
+  <h3>#8 random</h3>
   <div class="kpis">
     <div class="kpi big"><span>56.9</span>均分</div>
     <div class="kpi"><span>94</span>最佳</div>
@@ -152,7 +167,7 @@
     · 完整终局率 <b>100%</b></p>
 </section>
 <section class="card">
-  <h3>#8 llm · GLM-5.3</h3>
+  <h3>#9 llm · GLM-5.3</h3>
   <div class="kpis">
     <div class="kpi big"><span>25.7</span>均分</div>
     <div class="kpi"><span>47</span>最佳</div>
@@ -169,7 +184,7 @@
 
   <h2>精彩回放</h2>
   <div class="gifs">
-    <div class="gif"><img src="demo-best-episode.gif" alt="demo-best-episode.gif"><p>demo-best-episode.gif</p></div><div class="gif"><img src="demo-qwen-best.gif" alt="demo-qwen-best.gif"><p>demo-qwen-best.gif</p></div>
+    <div class="gif"><img src="demo-beam-best.gif" alt="demo-beam-best.gif"><p>demo-beam-best.gif</p></div><div class="gif"><img src="demo-best-episode.gif" alt="demo-best-episode.gif"><p>demo-best-episode.gif</p></div><div class="gif"><img src="demo-qwen-best.gif" alt="demo-qwen-best.gif"><p>demo-qwen-best.gif</p></div>
   </div>
 
   <footer>由 <a href="https://github.com/kittimzhe/blockblast-bench">blockblast-bench</a> 生成 ·

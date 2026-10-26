@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Callable, Dict, Type
 
 from .base import Action, Agent, AgentError, AgentParseError
+from .beam_agent import BeamAgent
 from .greedy_agent import GreedyAgent
 from .heuristic_agent import HeuristicAgent
 from .llm_agent import LLMAgent, LLMConfig, parse_action
@@ -14,6 +15,7 @@ AGENT_REGISTRY: Dict[str, Type[Agent]] = {
     "random": RandomAgent,
     "greedy": GreedyAgent,
     "heuristic": HeuristicAgent,
+    "beam": BeamAgent,
     "llm": LLMAgent,
 }
 
@@ -44,6 +46,7 @@ __all__ = [
     "RandomAgent",
     "GreedyAgent",
     "HeuristicAgent",
+    "BeamAgent",
     "LLMAgent",
     "LLMConfig",
     "parse_action",

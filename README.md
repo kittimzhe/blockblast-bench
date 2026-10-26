@@ -7,7 +7,7 @@
 
 **Block Blast 游戏环境 + AI Agent 评测系统**：复刻 Block Blast!（8x8 方块消除）的游戏机制，让大模型 / 启发式 Agent 对局打分，量化评测模型的**空间规划、长程决策与指令遵循**能力。
 
-> **English**: A deterministic Block Blast (8x8 block puzzle) environment and LLM-agent benchmark, in pure stdlib Python. Agents — `random` / `greedy` / `heuristic` baselines and any OpenAI-compatible LLM — play identical seeded games; the harness scores spatial planning, long-horizon survival and instruction following, renders episodes as animated GIFs, and also ships as an [inspect_ai](https://inspect.aisi.org.uk/) Task.
+> **English**: A deterministic Block Blast (8x8 block puzzle) environment and LLM-agent benchmark, in pure stdlib Python. Agents — `random` / `greedy` / `heuristic` / `beam` (exact tray-cycle lookahead) baselines and any OpenAI-compatible LLM — play identical seeded games; the harness scores spatial planning, long-horizon survival and instruction following, renders episodes as animated GIFs, and also ships as an [inspect_ai](https://inspect.aisi.org.uk/) Task.
 
 纯 Python 标准库实现（零第三方依赖），完全确定性（同种子 = 同牌序），所有 Agent 在相同种子集上对比，结果公平可复现。
 
@@ -20,7 +20,7 @@ cd blockblast-bench
 # 看一局演示（启发式 Agent 实时走子）
 python3 -m blockblast demo --agent heuristic --seed 42
 
-# 跑经典基线（random / greedy / heuristic 各 10 局）
+# 跑经典基线（random / greedy / heuristic / beam 各 10 局）
 bash examples/run_baselines.sh
 
 # 评测一个 LLM（任何 OpenAI 兼容端点）
@@ -59,6 +59,7 @@ CI 在 Python 3.9 与 3.13 上跑全部用例，按四层组织：
 
 | GIF | Agent | 单局成绩 |
 |---|---|---|
+| ![beam demo](demo-beam-best.gif) | beam（宽度 40） | **6141 分**（seed 2027，587 步 / 292 行） |
 | ![heuristic demo](demo-best-episode.gif) | heuristic | 1142 分（seed 2027） |
 | ![qwen demo](demo-qwen-best.gif) | qwen3.7-plus（LLM） | 862 分（seed 2025，87 步 / 37 行 / combo 7） |
 
@@ -70,11 +71,14 @@ CI 在 Python 3.9 与 3.13 上跑全部用例，按四层组织：
 
 | # | Agent | Mean | Median | Max | Moves | Lines | Combo |
 |---:|---|---:|---:|---:|---:|---:|---:|
-| 1 | heuristic | 586.9 | 513.0 | 1142 | 64.0 | 26.9 | 4 |
-| 2 | greedy | 169.3 | 151.5 | 358 | 24.7 | 6.7 | 4 |
-| 3 | random | 56.9 | 55.5 | 94 | 13.3 | 0.9 | 1 |
+| 1 | beam（宽度 40） | 2031.2 | 1627.0 | 6141 | 200.0 | 94.5 | 4 |
+| 2 | heuristic | 586.9 | 513.0 | 1142 | 64.0 | 26.9 | 4 |
+| 3 | greedy | 169.3 | 151.5 | 358 | 24.7 | 6.7 | 4 |
+| 4 | random | 56.9 | 55.5 | 94 | 13.3 | 0.9 | 1 |
 
-被测 LLM 的成绩落在这个梯度的哪个位置，直观反映其空间规划能力：**不如 random = 连合法放置都难以维持；超过 greedy = 具备一步收益规划；逼近 heuristic = 有板面形状管理意识**。
+`beam` 在当前托盘周期内做精确前瞻搜索（托盘 3 块全部用完才补发，周期内搜索是精确的），叶子用 heuristic 的板面特征评估——mean 直接跃升至 2031，揭示这个游戏还有巨大天花板。
+
+被测 LLM 的成绩落在这个梯度的哪个位置，直观反映其空间规划能力：**不如 random = 连合法放置都难以维持；超过 greedy = 具备一步收益规划；逼近 heuristic = 有板面形状管理意识；逼近 beam = 具备跨托盘周期的长程规划**。
 
 **LLM 实测**（qwen3.7-plus，同种子集 10 局，2026-10-26）：mean 286.9 / median 246 / **max 862**（87 步、37 行、combo 7，单局超过 heuristic 均值），mean_moves 32.1，best_combo 7，invalid_per_move 0.0125——**已超过 greedy 基线，位居排行榜第 2**。决策分析：单步效率 0.954、消行机会把握 125/130 = 96%。其中 6 局被端点网络故障（读超时 / TLS 连接被掐断）截断，`--resume` 可从断点续跑补完；被截断的局也计入部分分数。
 
