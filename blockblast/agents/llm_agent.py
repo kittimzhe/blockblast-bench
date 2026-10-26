@@ -48,6 +48,18 @@ OUTPUT
 - Reply with ONLY a JSON object, no extra text:
   {"piece": <tray index 0-2>, "row": <0-7>, "col": <0-7>}"""
 
+#: Variant that invites free-form reasoning before the final JSON answer.
+REASONING_SYSTEM_PROMPT = DEFAULT_SYSTEM_PROMPT.replace(
+    """OUTPUT
+- Reply with ONLY a JSON object, no extra text:
+  {"piece": <tray index 0-2>, "row": <0-7>, "col": <0-7>}""",
+    """OUTPUT
+- First think through the position: candidate placements, which lines they
+  complete or set up, and what shape the board is left in.
+- Then give your final answer as a JSON object on the LAST line:
+  {"piece": <tray index 0-2>, "row": <0-7>, "col": <0-7>}""",
+)
+
 RETRY_SUFFIX = (
     "\n\nRETRY: {feedback}\n"
     "Answer again. Choose a piece still present in the tray and a legal "
@@ -70,6 +82,8 @@ class LLMConfig:
     backoff_cap: float = 60.0
     max_tokens: Optional[int] = None
     system_prompt: Optional[str] = None
+    #: let the model reason in prose before the final JSON line
+    allow_reasoning: bool = False
     extra_headers: Dict[str, str] = field(default_factory=dict)
 
 
@@ -124,23 +138,44 @@ def _is_timeout(exc: Exception) -> bool:
     return "timed out" in str(exc).lower()
 
 
-def parse_action(text: str) -> Action:
-    """Best-effort extraction of {"piece", "row", "col"} from a model reply."""
-    t = text.strip()
-    fenced = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", t, re.S)
-    if fenced:
-        t = fenced.group(1)
-    start, end = t.find("{"), t.rfind("}")
-    if start >= 0 and end > start:
-        t = t[start : end + 1]
-    try:
-        obj = json.loads(t)
-    except Exception:
-        raise AgentParseError(f"cannot parse JSON from reply: {text[:200]!r}")
+def _action_from_obj(obj: Any) -> Optional[Action]:
     try:
         return Action(int(obj["piece"]), int(obj["row"]), int(obj["col"]))
-    except (KeyError, TypeError, ValueError) as exc:
-        raise AgentParseError(f"reply has missing/invalid fields ({exc}): {text[:200]!r}")
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def parse_action(text: str) -> Action:
+    """Best-effort extraction of {"piece", "row", "col"} from a model reply.
+
+    Scans every brace-delimited JSON candidate and returns the LAST one
+    carrying the three action fields, so a reasoning preamble (which may
+    itself mention candidate moves) never shadows the final answer.
+    """
+    t = text.strip()
+    # prefer fenced blocks when present (markdown-style replies)
+    fenced = re.findall(r"```(?:json)?\s*(\{.*?\})\s*```", t, re.S)
+    sources = fenced if fenced else [t]
+    action: Optional[Action] = None
+    bad_fields = False
+    for source in sources:
+        for m in re.finditer(r"\{[^{}]*\}", source):
+            try:
+                obj = json.loads(m.group(0))
+            except Exception:
+                continue
+            found = _action_from_obj(obj)
+            if found is not None:
+                action = found  # keep scanning: the last valid one wins
+            elif isinstance(obj, dict):
+                bad_fields = True
+    if action is not None:
+        return action
+    if bad_fields:
+        raise AgentParseError(
+            f"reply has JSON but missing/invalid piece/row/col fields: {text[:200]!r}"
+        )
+    raise AgentParseError(f"cannot parse JSON from reply: {text[:200]!r}")
 
 
 class LLMAgent(Agent):
@@ -178,8 +213,14 @@ class LLMAgent(Agent):
         user = render_observation(obs)
         if feedback:
             user += RETRY_SUFFIX.format(feedback=feedback)
+        if self.config.system_prompt:
+            system = self.config.system_prompt
+        elif self.config.allow_reasoning:
+            system = REASONING_SYSTEM_PROMPT
+        else:
+            system = DEFAULT_SYSTEM_PROMPT
         messages = [
-            {"role": "system", "content": self.config.system_prompt or DEFAULT_SYSTEM_PROMPT},
+            {"role": "system", "content": system},
             {"role": "user", "content": user},
         ]
 

@@ -129,6 +129,7 @@ def cmd_run(args) -> int:
             max_network_attempts=args.network_retries,
             max_tokens=args.max_tokens,
             system_prompt=system_prompt,
+            allow_reasoning=args.allow_reasoning,
         )
 
         def factory() -> LLMAgent:
@@ -315,6 +316,8 @@ def _add_llm(p: argparse.ArgumentParser) -> None:
                    help="network attempts per move (exponential backoff, growing timeout)")
     p.add_argument("--max-tokens", type=int, default=None)
     p.add_argument("--system-prompt-file", default=None, help="optional file with a custom system prompt")
+    p.add_argument("--allow-reasoning", action="store_true",
+                   help="invite free-form reasoning before the final JSON line (prompt variant)")
 
 
 def build_parser() -> argparse.ArgumentParser:

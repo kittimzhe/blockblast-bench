@@ -85,6 +85,46 @@ def test_parse_action_rejects_garbage():
         parse_action('{"piece": "zero", "row": 1, "col": 1}')
 
 
+def test_parse_action_reasoning_takes_last_json():
+    """A reasoning preamble mentioning candidate moves must not win over the final answer."""
+    text = (
+        "Candidate A: {\"piece\": 0, \"row\": 0, \"col\": 0} fills nothing.\n"
+        "Candidate B completes row 4, so I prefer it.\n"
+        'Final answer: {"piece": 2, "row": 4, "col": 6}'
+    )
+    assert parse_action(text) == Action(2, 4, 6)
+
+
+def test_parse_action_last_fenced_block_wins():
+    text = (
+        'First idea:\n```json\n{"piece": 0, "row": 1, "col": 1}\n```\n'
+        'On reflection:\n```json\n{"piece": 1, "row": 5, "col": 2}\n```'
+    )
+    assert parse_action(text) == Action(1, 5, 2)
+
+
+def test_reasoning_prompt_selected_by_config(monkeypatch):
+    monkeypatch.setenv("FAKE_KEY", "k")
+    seen = {}
+
+    def capture(cfg, api_key, messages, timeout=None):
+        seen["system"] = messages[0]["content"]
+        return json.dumps({"piece": 0, "row": 0, "col": 0}), {}
+
+    monkeypatch.setattr("blockblast.agents.llm_agent._post_chat", capture)
+    from blockblast.agents.llm_agent import REASONING_SYSTEM_PROMPT
+    from blockblast.env import BlockBlastEnv
+
+    agent = LLMAgent(LLMConfig(api_key_env="FAKE_KEY", allow_reasoning=True))
+    agent.act(BlockBlastEnv(seed=1).observation())
+    assert seen["system"] == REASONING_SYSTEM_PROMPT
+    assert "First think through" in seen["system"]
+
+    agent = LLMAgent(LLMConfig(api_key_env="FAKE_KEY"))
+    agent.act(BlockBlastEnv(seed=1).observation())
+    assert "ONLY a JSON object" in seen["system"]
+
+
 class _FakeEndpoint:
     """Simulates an LLM that plays greedily by parsing the rendered board."""
 

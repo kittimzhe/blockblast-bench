@@ -135,6 +135,7 @@ python3 -m blockblast run --agent llm \
 - `--concurrency N`：多局并行（注意端点限流）。
 - `--timeout` / `--network-retries`：慢推理模型建议 `--timeout 180`；端点不稳时重试会自动指数退避并放大超时。
 - `--resume <run_dir>`：续跑一次被网络中断的 run（保留完成局、从断点恢复未完成局，产出一个新的完整 run）。
+- `--allow-reasoning`：prompt 变体——允许模型先自由分析局面、最后一行给 JSON（解析器取**最后一个**合法 JSON，推理中提到的候选不会被误读）。与默认"只回 JSON"模式同种子对比，可量化推理空间对空间规划的增益。
 
 模型看到的观测是带坐标的文本棋盘 + 托盘 mini-grid，要求只回复
 `{"piece": 0-2, "row": 0-7, "col": 0-7}`。测试套件里有一个"假端点"
