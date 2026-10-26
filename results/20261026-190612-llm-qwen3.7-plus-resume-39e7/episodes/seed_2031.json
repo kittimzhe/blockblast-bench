@@ -1,0 +1,22 @@
+{
+  "run_id": "20261026-190612-llm-qwen3.7-plus-resume-39e7",
+  "agent": "llm",
+  "model": "qwen3.7-plus",
+  "seed": 2031,
+  "score": 0,
+  "moves": 0,
+  "lines_cleared": 0,
+  "max_combo": 0,
+  "perfect_clears": 0,
+  "invalid_actions": 0,
+  "reason": "agent_error",
+  "duration_s": 406.515,
+  "error": "network failure after 8 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>",
+  "transcript": [
+    {
+      "move": 1,
+      "terminal_error": "network failure after 8 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>",
+      "reason": "agent_error"
+    }
+  ]
+}
