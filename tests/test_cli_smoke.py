@@ -100,3 +100,16 @@ def test_cli_resume_rejects_missing_run(tmp_path, capsys):
         "--results-dir", str(tmp_path), "--resume", str(tmp_path / "nope"),
     ])
     assert rc == 2
+
+
+def test_cli_report(run_dir, tmp_path, capsys):
+    out = tmp_path / "site" / "index.html"
+    assert main([
+        "report", "--results-dir", str(run_dir.parent), "--output", str(out),
+        "--gif", str(run_dir.parent.parent / "nonexistent.gif"),
+    ]) == 0
+    page = out.read_text(encoding="utf-8")
+    assert "<!DOCTYPE html>" in page
+    assert "greedy" in page
+    assert "<svg" in page  # per-episode chart present
+    assert "暂无回放" in page or 'class="gif"' in page

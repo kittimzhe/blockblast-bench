@@ -259,6 +259,14 @@ def cmd_gif(args) -> int:
     return 0
 
 
+def cmd_report(args) -> int:
+    from .report_html import generate_report
+
+    out = generate_report(args.results_dir, args.output, gifs=args.gif)
+    print(f"wrote {out} ({out.stat().st_size // 1024} KB)")
+    return 0
+
+
 def cmd_analyze(args) -> int:
     from .analysis import analyze_run, render_analysis
 
@@ -389,6 +397,13 @@ def build_parser() -> argparse.ArgumentParser:
     analyze.add_argument("run_dir", help="path to results/<run_id>")
     analyze.add_argument("--json", action="store_true", help="also write analysis.json into the run dir")
     analyze.set_defaults(func=cmd_analyze)
+
+    report = sub.add_parser("report", help="generate a self-contained HTML report")
+    report.add_argument("--results-dir", type=Path, default=Path("results"))
+    report.add_argument("--output", type=Path, default=Path("docs/index.html"))
+    report.add_argument("--gif", action="append", type=Path, default=None,
+                        help="GIF to embed (repeatable; paths relative to repo root)")
+    report.set_defaults(func=cmd_report)
 
     shapes = sub.add_parser("shapes", help="print the piece catalog")
     shapes.set_defaults(func=cmd_shapes)

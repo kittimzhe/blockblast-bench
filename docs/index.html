@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Block Blast Benchmark — 评测报告</title>
+<style>
+  :root { --fg:#1f2430; --muted:#8892a4; --line:#e3e8ef; --bg:#f6f8fb; --card:#fff; --accent:#4c8dff; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.6 -apple-system,"PingFang SC","Segoe UI",sans-serif; color:var(--fg); background:var(--bg); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+  h1 { font-size: 26px; margin:0 0 4px; }
+  h2 { font-size: 19px; margin: 34px 0 12px; }
+  .sub { color: var(--muted); margin:0 0 28px; }
+  table { border-collapse: collapse; width:100%; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; font-size:14px; }
+  th, td { padding:8px 12px; text-align:right; border-bottom:1px solid var(--line); }
+  th:first-child, td:first-child { text-align:left; }
+  th { background:#eef2f8; font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:16px 0; }
+  .card h3 { margin:0 0 10px; font-size:16px; }
+  .kpis { display:flex; flex-wrap:wrap; gap:10px 22px; margin-bottom:10px; }
+  .kpi { min-width:64px; font-size:12px; color:var(--muted); }
+  .kpi span { display:block; font-size:20px; font-weight:700; color:var(--accent); }
+  .kpi.big span { font-size:28px; }
+  .meta { color:var(--muted); font-size:12.5px; margin:8px 0 0; }
+  code { background:#eef2f8; padding:1px 6px; border-radius:4px; font-size:12px; }
+  .gifs { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+  .gif { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; text-align:center; }
+  .gif img { max-width:100%; height:auto; border-radius:6px; }
+  .gif p { margin:8px 0 0; font-size:13px; color:var(--muted); }
+  footer { margin-top:40px; color:var(--muted); font-size:13px; }
+  a { color: var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Block Blast Benchmark</h1>
+  <p class="sub">确定性 8×8 方块消除环境上的 AI Agent 评测 · 同种子集公平对比 · 生成于 2026-10-26</p>
+
+  <h2>排行榜</h2>
+  <table>
+    <tr><th>#</th><th>Agent</th><th>Model</th><th>Eps</th><th>Mean</th><th>Median</th><th>Max</th><th>Moves</th><th>Lines</th><th>Combo</th><th>Inv/mv</th><th>Tok/mv</th></tr>
+    <tr><td>1</td><td>heuristic</td><td>–</td><td>10</td><td><b>586.9</b></td><td>513.0</td><td>1142</td><td>64.0</td><td>26.9</td><td>4</td><td>0.000</td><td>–</td></tr><tr><td>2</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>3</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>4</td><td>llm</td><td>qwen3.7-plus</td><td>10</td><td><b>286.9</b></td><td>246.0</td><td>862</td><td>32.1</td><td>12.9</td><td>7</td><td>0.013</td><td>7549.9</td></tr><tr><td>5</td><td>greedy</td><td>–</td><td>10</td><td><b>169.3</b></td><td>151.5</td><td>358</td><td>24.7</td><td>6.7</td><td>4</td><td>0.000</td><td>–</td></tr><tr><td>6</td><td>llm</td><td>qwen3.7-plus</td><td>3</td><td><b>98.3</b></td><td>114.0</td><td>137</td><td>11.7</td><td>4.3</td><td>2</td><td>0.029</td><td>5912.6</td></tr><tr><td>7</td><td>random</td><td>–</td><td>10</td><td><b>56.9</b></td><td>55.5</td><td>94</td><td>13.3</td><td>0.9</td><td>1</td><td>0.000</td><td>–</td></tr><tr><td>8</td><td>llm</td><td>GLM-5.3</td><td>3</td><td><b>25.7</b></td><td>25.0</td><td>47</td><td>3.0</td><td>1.0</td><td>2</td><td>0.000</td><td>4128.1</td></tr>
+  </table>
+
+  <h2>各 run 画像</h2>
+  
+<section class="card">
+  <h3>#1 heuristic</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>586.9</span>均分</div>
+    <div class="kpi"><span>1142</span>最佳</div>
+    <div class="kpi"><span>64.0</span>步数</div>
+    <div class="kpi"><span>26.9</span>消行</div>
+    <div class="kpi"><span>4</span>最高combo</div>
+    
+    <div class="kpi"><span>0.979</span>决策效率</div>
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="54.5" width="43.8" height="21.5" rx="1.5" fill="#4c8dff"/><text x="23.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">341</text><rect x="47.8" y="10.5" width="43.8" height="65.5" rx="1.5" fill="#4c8dff"/><text x="69.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">1039</text><rect x="93.6" y="41.4" width="43.8" height="34.6" rx="1.5" fill="#4c8dff"/><text x="115.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">549</text><rect x="139.4" y="4.0" width="43.8" height="72.0" rx="1.5" fill="#4c8dff"/><text x="161.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">1142</text><rect x="185.2" y="18.6" width="43.8" height="57.4" rx="1.5" fill="#4c8dff"/><text x="207.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">911</text><rect x="231.0" y="34.3" width="43.8" height="41.7" rx="1.5" fill="#4c8dff"/><text x="252.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">661</text><rect x="276.8" y="60.2" width="43.8" height="15.8" rx="1.5" fill="#4c8dff"/><text x="298.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">250</text><rect x="322.6" y="45.9" width="43.8" height="30.1" rx="1.5" fill="#4c8dff"/><text x="344.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">477</text><rect x="368.4" y="53.7" width="43.8" height="22.3" rx="1.5" fill="#4c8dff"/><text x="390.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">354</text><rect x="414.2" y="66.9" width="43.8" height="9.1" rx="1.5" fill="#4c8dff"/><text x="436.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">145</text></svg>
+  <p class="meta">run <code>20261023-113751-heuristic-baseline-ede1</code> · 10 局 · 种子 2024…2033
+    · 完整终局率 <b>100%</b></p>
+</section>
+<section class="card">
+  <h3>#2 llm · qwen3.7-plus</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>286.9</span>均分</div>
+    <div class="kpi"><span>862</span>最佳</div>
+    <div class="kpi"><span>32.1</span>步数</div>
+    <div class="kpi"><span>12.9</span>消行</div>
+    <div class="kpi"><span>7</span>最高combo</div>
+    <div class="kpi"><span>7549.9</span>tok/步</div>
+    <div class="kpi"><span>0.954</span>决策效率</div>
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="65.7" width="43.8" height="10.3" rx="1.5" fill="#4c8dff"/><text x="23.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">123</text><rect x="47.8" y="4.0" width="43.8" height="72.0" rx="1.5" fill="#4c8dff"/><text x="69.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">862</text><rect x="93.6" y="29.1" width="43.8" height="46.9" rx="1.5" fill="#4c8dff"/><text x="115.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">562</text><rect x="139.4" y="48.2" width="43.8" height="27.8" rx="1.5" fill="#4c8dff"/><text x="161.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">333</text><rect x="185.2" y="34.5" width="43.8" height="41.5" rx="1.5" fill="#4c8dff"/><text x="207.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">497</text><rect x="231.0" y="51.7" width="43.8" height="24.3" rx="1.5" fill="#4c8dff"/><text x="252.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">291</text><rect x="276.8" y="59.2" width="43.8" height="16.8" rx="1.5" fill="#4c8dff"/><text x="298.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">201</text><rect x="322.6" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="344.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text><rect x="368.4" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="390.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text><rect x="414.2" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="436.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text></svg>
+  <p class="meta">run <code>20261026-104649-llm-qwen3.7-plus-mass-v3-692d</code> · 10 局 · 种子 2024…2033
+    · 完整终局率 <b>40%</b></p>
+</section>
+<section class="card">
+  <h3>#3 llm · qwen3.7-plus</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>286.9</span>均分</div>
+    <div class="kpi"><span>862</span>最佳</div>
+    <div class="kpi"><span>32.1</span>步数</div>
+    <div class="kpi"><span>12.9</span>消行</div>
+    <div class="kpi"><span>7</span>最高combo</div>
+    <div class="kpi"><span>7549.9</span>tok/步</div>
+    
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="65.7" width="43.8" height="10.3" rx="1.5" fill="#4c8dff"/><text x="23.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">123</text><rect x="47.8" y="4.0" width="43.8" height="72.0" rx="1.5" fill="#4c8dff"/><text x="69.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">862</text><rect x="93.6" y="29.1" width="43.8" height="46.9" rx="1.5" fill="#4c8dff"/><text x="115.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">562</text><rect x="139.4" y="48.2" width="43.8" height="27.8" rx="1.5" fill="#4c8dff"/><text x="161.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">333</text><rect x="185.2" y="34.5" width="43.8" height="41.5" rx="1.5" fill="#4c8dff"/><text x="207.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">497</text><rect x="231.0" y="51.7" width="43.8" height="24.3" rx="1.5" fill="#4c8dff"/><text x="252.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">291</text><rect x="276.8" y="59.2" width="43.8" height="16.8" rx="1.5" fill="#4c8dff"/><text x="298.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">201</text><rect x="322.6" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="344.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text><rect x="368.4" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="390.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text><rect x="414.2" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="436.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text></svg>
+  <p class="meta">run <code>20261026-185722-llm-qwen3.7-plus-resume-0d90</code> · 10 局 · 种子 2024…2033
+    · 完整终局率 <b>40%</b></p>
+</section>
+<section class="card">
+  <h3>#4 llm · qwen3.7-plus</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>286.9</span>均分</div>
+    <div class="kpi"><span>862</span>最佳</div>
+    <div class="kpi"><span>32.1</span>步数</div>
+    <div class="kpi"><span>12.9</span>消行</div>
+    <div class="kpi"><span>7</span>最高combo</div>
+    <div class="kpi"><span>7549.9</span>tok/步</div>
+    
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="65.7" width="43.8" height="10.3" rx="1.5" fill="#4c8dff"/><text x="23.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">123</text><rect x="47.8" y="4.0" width="43.8" height="72.0" rx="1.5" fill="#4c8dff"/><text x="69.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">862</text><rect x="93.6" y="29.1" width="43.8" height="46.9" rx="1.5" fill="#4c8dff"/><text x="115.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">562</text><rect x="139.4" y="48.2" width="43.8" height="27.8" rx="1.5" fill="#4c8dff"/><text x="161.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">333</text><rect x="185.2" y="34.5" width="43.8" height="41.5" rx="1.5" fill="#4c8dff"/><text x="207.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">497</text><rect x="231.0" y="51.7" width="43.8" height="24.3" rx="1.5" fill="#4c8dff"/><text x="252.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">291</text><rect x="276.8" y="59.2" width="43.8" height="16.8" rx="1.5" fill="#4c8dff"/><text x="298.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">201</text><rect x="322.6" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="344.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text><rect x="368.4" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="390.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text><rect x="414.2" y="75.0" width="43.8" height="1.0" rx="1.5" fill="#4c8dff"/><text x="436.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">0</text></svg>
+  <p class="meta">run <code>20261026-190612-llm-qwen3.7-plus-resume-39e7</code> · 10 局 · 种子 2024…2033
+    · 完整终局率 <b>40%</b></p>
+</section>
+<section class="card">
+  <h3>#5 greedy</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>169.3</span>均分</div>
+    <div class="kpi"><span>358</span>最佳</div>
+    <div class="kpi"><span>24.7</span>步数</div>
+    <div class="kpi"><span>6.7</span>消行</div>
+    <div class="kpi"><span>4</span>最高combo</div>
+    
+    <div class="kpi"><span>1.000</span>决策效率</div>
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="43.8" width="43.8" height="32.2" rx="1.5" fill="#4c8dff"/><text x="23.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">160</text><rect x="47.8" y="4.0" width="43.8" height="72.0" rx="1.5" fill="#4c8dff"/><text x="69.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">358</text><rect x="93.6" y="39.0" width="43.8" height="37.0" rx="1.5" fill="#4c8dff"/><text x="115.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">184</text><rect x="139.4" y="26.7" width="43.8" height="49.3" rx="1.5" fill="#4c8dff"/><text x="161.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">245</text><rect x="185.2" y="50.5" width="43.8" height="25.5" rx="1.5" fill="#4c8dff"/><text x="207.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">127</text><rect x="231.0" y="68.2" width="43.8" height="7.8" rx="1.5" fill="#4c8dff"/><text x="252.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">39</text><rect x="276.8" y="48.0" width="43.8" height="28.0" rx="1.5" fill="#4c8dff"/><text x="298.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">139</text><rect x="322.6" y="47.2" width="43.8" height="28.8" rx="1.5" fill="#4c8dff"/><text x="344.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">143</text><rect x="368.4" y="30.7" width="43.8" height="45.3" rx="1.5" fill="#4c8dff"/><text x="390.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">225</text><rect x="414.2" y="61.3" width="43.8" height="14.7" rx="1.5" fill="#4c8dff"/><text x="436.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">73</text></svg>
+  <p class="meta">run <code>20261023-113634-greedy-baseline-b072</code> · 10 局 · 种子 2024…2033
+    · 完整终局率 <b>100%</b></p>
+</section>
+<section class="card">
+  <h3>#6 llm · qwen3.7-plus</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>98.3</span>均分</div>
+    <div class="kpi"><span>137</span>最佳</div>
+    <div class="kpi"><span>11.7</span>步数</div>
+    <div class="kpi"><span>4.3</span>消行</div>
+    <div class="kpi"><span>2</span>最高combo</div>
+    <div class="kpi"><span>5912.6</span>tok/步</div>
+    
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="16.1" width="150.7" height="59.9" rx="1.5" fill="#4c8dff"/><text x="77.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">114</text><rect x="154.7" y="52.9" width="150.7" height="23.1" rx="1.5" fill="#4c8dff"/><text x="230.0" y="87" font-size="8" text-anchor="middle" fill="#8892a4">44</text><rect x="307.3" y="4.0" width="150.7" height="72.0" rx="1.5" fill="#4c8dff"/><text x="382.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">137</text></svg>
+  <p class="meta">run <code>20261023-150523-llm-qwen3.7-plus-mass-0725</code> · 3 局 · 种子 2024…2026
+    · 完整终局率 <b>0%</b></p>
+</section>
+<section class="card">
+  <h3>#7 random</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>56.9</span>均分</div>
+    <div class="kpi"><span>94</span>最佳</div>
+    <div class="kpi"><span>13.3</span>步数</div>
+    <div class="kpi"><span>0.9</span>消行</div>
+    <div class="kpi"><span>1</span>最高combo</div>
+    
+    <div class="kpi"><span>0.515</span>决策效率</div>
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="43.8" width="43.8" height="32.2" rx="1.5" fill="#4c8dff"/><text x="23.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">42</text><rect x="47.8" y="46.9" width="43.8" height="29.1" rx="1.5" fill="#4c8dff"/><text x="69.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">38</text><rect x="93.6" y="42.3" width="43.8" height="33.7" rx="1.5" fill="#4c8dff"/><text x="115.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">44</text><rect x="139.4" y="24.7" width="43.8" height="51.3" rx="1.5" fill="#4c8dff"/><text x="161.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">67</text><rect x="185.2" y="29.3" width="43.8" height="46.7" rx="1.5" fill="#4c8dff"/><text x="207.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">61</text><rect x="231.0" y="34.6" width="43.8" height="41.4" rx="1.5" fill="#4c8dff"/><text x="252.9" y="87" font-size="8" text-anchor="middle" fill="#8892a4">54</text><rect x="276.8" y="32.3" width="43.8" height="43.7" rx="1.5" fill="#4c8dff"/><text x="298.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">57</text><rect x="322.6" y="27.0" width="43.8" height="49.0" rx="1.5" fill="#4c8dff"/><text x="344.5" y="87" font-size="8" text-anchor="middle" fill="#8892a4">64</text><rect x="368.4" y="4.0" width="43.8" height="72.0" rx="1.5" fill="#4c8dff"/><text x="390.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">94</text><rect x="414.2" y="39.2" width="43.8" height="36.8" rx="1.5" fill="#4c8dff"/><text x="436.1" y="87" font-size="8" text-anchor="middle" fill="#8892a4">48</text></svg>
+  <p class="meta">run <code>20261023-113605-random-baseline-77ca</code> · 10 局 · 种子 2024…2033
+    · 完整终局率 <b>100%</b></p>
+</section>
+<section class="card">
+  <h3>#8 llm · GLM-5.3</h3>
+  <div class="kpis">
+    <div class="kpi big"><span>25.7</span>均分</div>
+    <div class="kpi"><span>47</span>最佳</div>
+    <div class="kpi"><span>3.0</span>步数</div>
+    <div class="kpi"><span>1.0</span>消行</div>
+    <div class="kpi"><span>2</span>最高combo</div>
+    <div class="kpi"><span>4128.1</span>tok/步</div>
+    
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="460" height="90" role="img"><rect x="2.0" y="37.7" width="150.7" height="38.3" rx="1.5" fill="#4c8dff"/><text x="77.3" y="87" font-size="8" text-anchor="middle" fill="#8892a4">25</text><rect x="154.7" y="68.3" width="150.7" height="7.7" rx="1.5" fill="#4c8dff"/><text x="230.0" y="87" font-size="8" text-anchor="middle" fill="#8892a4">5</text><rect x="307.3" y="4.0" width="150.7" height="72.0" rx="1.5" fill="#4c8dff"/><text x="382.7" y="87" font-size="8" text-anchor="middle" fill="#8892a4">47</text></svg>
+  <p class="meta">run <code>20261023-142549-llm-GLM-5.3-mass-835d</code> · 3 局 · 种子 2024…2026
+    · 完整终局率 <b>0%</b></p>
+</section>
+
+  <h2>精彩回放</h2>
+  <div class="gifs">
+    <div class="gif"><img src="demo-best-episode.gif" alt="demo-best-episode.gif"><p>demo-best-episode.gif</p></div><div class="gif"><img src="demo-qwen-best.gif" alt="demo-qwen-best.gif"><p>demo-qwen-best.gif</p></div>
+  </div>
+
+  <footer>由 <a href="https://github.com/kittimzhe/blockblast-bench">blockblast-bench</a> 生成 ·
+  完整数据见仓库 <code>results/</code> 目录 · 分数只在同种子集与同计分配置下可比</footer>
+</div>
+</body>
+</html>

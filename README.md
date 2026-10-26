@@ -64,6 +64,7 @@ CI 在 Python 3.9 与 3.13 上跑全部用例，按四层组织：
 
 - `blockblast gif <episode.json>` — 导出 GIF 动图：琥珀色 = 新落子，白色闪烁 = 消除行列，底部 HUD 显示步数/得分/combo。**纯标准库实现**（内置 GIF89a + LZW 编码器，`gifenc.py` 约 150 行），不引入任何图像依赖；编码正确性在测试中用 Pillow 做像素级解码校验。
 - `blockblast watch <episode.json>` — 终端内 ANSI 动画回放，适合快速翻看。
+- `blockblast report` — 生成**单文件 HTML 评测报告**（排行榜 + 各 run KPI 卡片 + 逐局得分 SVG 图表 + GIF 回放，零外部依赖）：`python3 -m blockblast report --gif demo-best-episode.gif --gif demo-qwen-best.gif`，在线示例见 GitHub Pages。
 
 ## 基线参考成绩（默认种子 2024..2033，10 局）
 

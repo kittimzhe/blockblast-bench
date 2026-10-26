@@ -1,0 +1,128 @@
+{
+  "run_id": "20261023-113634-greedy-baseline-b072",
+  "agent": "greedy",
+  "model": null,
+  "episodes": [
+    {
+      "seed": 2024,
+      "score": 160,
+      "moves": 22,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.656,
+      "final_empty_regions": 8,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2025,
+      "score": 358,
+      "moves": 47,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.594,
+      "final_empty_regions": 10,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2026,
+      "score": 184,
+      "moves": 23,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.469,
+      "final_empty_regions": 6,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2027,
+      "score": 245,
+      "moves": 32,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.5,
+      "final_empty_regions": 6,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2028,
+      "score": 127,
+      "moves": 23,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.5,
+      "final_empty_regions": 5,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2029,
+      "score": 39,
+      "moves": 10,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.609,
+      "final_empty_regions": 6,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2030,
+      "score": 139,
+      "moves": 23,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.688,
+      "final_empty_regions": 12,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2031,
+      "score": 143,
+      "moves": 24,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.75,
+      "final_empty_regions": 11,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2032,
+      "score": 225,
+      "moves": 29,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.391,
+      "final_empty_regions": 4,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2033,
+      "score": 73,
+      "moves": 14,
+      "reason": "board_full",
+      "greedy_efficiency": 1.0,
+      "missed_clears": 0,
+      "final_fill": 0.578,
+      "final_empty_regions": 9,
+      "invalid_kinds": {}
+    }
+  ],
+  "aggregate": {
+    "greedy_efficiency": 1.0,
+    "moves_assessed": 247,
+    "clears_taken": 66,
+    "clears_available": 66,
+    "clear_conversion": 1.0,
+    "missed_clears": 0,
+    "invalid_kinds": {},
+    "mean_final_fill": 0.574,
+    "mean_final_empty_regions": 7.7
+  }
+}
