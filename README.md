@@ -38,7 +38,20 @@ python3 -m blockblast watch results/<run_id>/episodes/seed_2024.json --delay 0.1
 ```
 
 > macOS 系统 Python 对字节码缓存目录有权限限制时，在命令前加 `PYTHONDONTWRITEBYTECODE=1`。
-> 测试：`python3 -m pytest`（68 个用例，Python 3.9+；GIF 像素级校验需额外装 pillow）。
+> 测试：`python3 -m pytest`（99 个用例，Python 3.9+；GIF 像素级校验需额外装 pillow）。
+
+## 测试策略
+
+CI 在 Python 3.9 与 3.13 上跑全部用例，按四层组织：
+
+| 层 | 文件 | 测什么 |
+|---|---|---|
+| 单元 | `test_pieces/scoring/env/render` | 方块库、计分公式、放置/消除规则、文本渲染 |
+| **不变量随机对测** | `test_invariants.py` | 数百局随机对局逐步断言：格子数守恒、消除行列必空、combo/分数账目可复算、托盘生命周期、game over ⇔ 无合法步；**敌意输入模糊测试**（越界/错误类型/用过的槽/畸形动作 → 只会抛 `InvalidActionError` 且状态零污染）；**golden 测试**钉死固定种子的最终结果——引擎语义一旦改变立即报警 |
+| 回归带 | `test_regression_bands.py` | 基线分数区间 + 能力阶梯（random < greedy < heuristic）必须成立 |
+| 端到端 | `test_cli_smoke.py`、`test_agents/harness/resume/analysis/animate` | 8 个 CLI 子命令全覆盖、产物文件、断点续跑、网络故障注入（超时/429/5xx/200 空 body）、GIF 像素级解码校验 |
+
+内置自校验：greedy 基线的决策效率恒等于 1.000（它就是单步最优的定义），任何偏离都是分析器或引擎的 bug。
 
 ## 动图回放
 
