@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.venv/
+venv/
+
+# secrets / local env
+.env
+.env.*
+*.key
+
+# eval outputs (keep the small committed reference results; new runs stay local)
+inspect-logs/
+.inspect-data/
+.inspect-logs/
+
+# OS
+.DS_Store

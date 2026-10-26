@@ -1,0 +1,108 @@
+{
+  "run_id": "20261023-142549-llm-GLM-5.3-mass-835d",
+  "agent": "llm",
+  "model": "GLM-5.3",
+  "episodes": 3,
+  "seed_base": 2024,
+  "seeds": [
+    2024,
+    2025,
+    2026
+  ],
+  "scoring": {
+    "points_per_cell": 1,
+    "points_per_line": 10,
+    "multi_line_progressive": true,
+    "combo_step": 0.5,
+    "combo_cap": 4.0,
+    "perfect_clear_bonus": 300
+  },
+  "started_at": "2026-10-23T14:25:49",
+  "aggregates": {
+    "episodes": 3,
+    "mean_score": 25.7,
+    "median_score": 25,
+    "max_score": 47,
+    "min_score": 5,
+    "stdev_score": 17.2,
+    "mean_moves": 3,
+    "total_moves": 9,
+    "mean_lines": 1,
+    "total_lines": 3,
+    "best_combo": 2,
+    "perfect_clears": 0,
+    "invalid_total": 0,
+    "invalid_per_move": 0.0,
+    "valid_completion_rate": 0.0,
+    "tokens_per_move": 4128.1,
+    "reasons": {
+      "agent_error": 3
+    },
+    "mean_duration_s": 780.1
+  },
+  "episodes_detail": [
+    {
+      "seed": 2024,
+      "score": 25,
+      "moves": 4,
+      "lines_cleared": 1,
+      "max_combo": 1,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "agent_error",
+      "duration_s": 1012.697,
+      "agent_stats": {
+        "requests": 4,
+        "network_errors": 6,
+        "parse_errors": 0,
+        "prompt_tokens": 2095,
+        "completion_tokens": 12317,
+        "total_tokens": 14412,
+        "latency_s": 277.9539354589999
+      },
+      "error": "network failure after retries: The read operation timed out"
+    },
+    {
+      "seed": 2025,
+      "score": 5,
+      "moves": 1,
+      "lines_cleared": 0,
+      "max_combo": 0,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "agent_error",
+      "duration_s": 399.697,
+      "agent_stats": {
+        "requests": 1,
+        "network_errors": 3,
+        "parse_errors": 0,
+        "prompt_tokens": 544,
+        "completion_tokens": 1976,
+        "total_tokens": 2520,
+        "latency_s": 33.40209975000016
+      },
+      "error": "network failure after retries: The read operation timed out"
+    },
+    {
+      "seed": 2026,
+      "score": 47,
+      "moves": 4,
+      "lines_cleared": 2,
+      "max_combo": 2,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "agent_error",
+      "duration_s": 927.906,
+      "agent_stats": {
+        "requests": 4,
+        "network_errors": 5,
+        "parse_errors": 0,
+        "prompt_tokens": 2100,
+        "completion_tokens": 18121,
+        "total_tokens": 20221,
+        "latency_s": 317.4418682920002
+      },
+      "error": "network failure after retries: The read operation timed out"
+    }
+  ]
+}

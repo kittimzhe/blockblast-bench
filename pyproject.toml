@@ -1,0 +1,33 @@
+[project]
+name = "blockblast-bench"
+version = "0.1.0"
+description = "Block Blast game environment + AI-agent benchmark: evaluate spatial planning and long-horizon decision making of LLM agents by playing the block-puzzle game."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "mengzhe" }]
+keywords = ["benchmark", "llm", "agents", "evaluation", "puzzle", "block-blast"]
+dependencies = []  # pure stdlib; zero-install runnable
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pillow"]
+inspect = ["inspect-ai", "openai"]
+
+[project.urls]
+Homepage = "https://github.com/kittimzhe/blockblast-bench"
+Issues = "https://github.com/kittimzhe/blockblast-bench/issues"
+
+[project.scripts]
+blockblast = "blockblast.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["blockblast*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
