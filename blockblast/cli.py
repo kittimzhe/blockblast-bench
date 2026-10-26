@@ -259,6 +259,22 @@ def cmd_gif(args) -> int:
     return 0
 
 
+def cmd_analyze(args) -> int:
+    from .analysis import analyze_run, render_analysis
+
+    run_dir = Path(args.run_dir)
+    if not (run_dir / "summary.json").exists():
+        print(f"error: {run_dir} is not a run directory (no summary.json)", file=sys.stderr)
+        return 2
+    report = analyze_run(run_dir)
+    print(render_analysis(report))
+    if args.json:
+        out = run_dir / "analysis.json"
+        out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"\nwrote {out}")
+    return 0
+
+
 def cmd_watch(args) -> int:
     """Animate a saved episode in the terminal (ANSI redraw)."""
     import time as _time
@@ -368,6 +384,11 @@ def build_parser() -> argparse.ArgumentParser:
     watch.add_argument("path", help="path to episodes/seed_N.json")
     watch.add_argument("--delay", type=float, default=0.15, help="seconds per move")
     watch.set_defaults(func=cmd_watch)
+
+    analyze = sub.add_parser("analyze", help="decision-quality analysis of a finished run")
+    analyze.add_argument("run_dir", help="path to results/<run_id>")
+    analyze.add_argument("--json", action="store_true", help="also write analysis.json into the run dir")
+    analyze.set_defaults(func=cmd_analyze)
 
     shapes = sub.add_parser("shapes", help="print the piece catalog")
     shapes.set_defaults(func=cmd_shapes)

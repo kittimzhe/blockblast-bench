@@ -95,8 +95,9 @@ blockblast/
 │   ├── heuristic_agent.py # 收益 + 贴边/碎片化/死区/平整度 特征
 │   └── llm_agent.py       # OpenAI 兼容端点（urllib 实现，零依赖）
 ├── harness.py     # 评测循环：固定种子集、非法步反馈重试、指标聚合
+├── analysis.py    # 决策质量分析：贪心效率/漏消行/终局碎片化/非法步分类
 ├── report.py      # summary.json / 逐局转录 / runs.jsonl / leaderboard.md
-└── cli.py         # demo / run / leaderboard / replay / gif / watch / shapes
+└── cli.py         # demo / run / leaderboard / replay / gif / watch / analyze / shapes
 ```
 
 ### 评测协议
@@ -117,6 +118,19 @@ blockblast/
 | `invalid_per_move` | 每步非法输出率（指令遵循） |
 | `valid_completion_rate` | 正常终局比例（非因非法步/接口错误中断） |
 | `tokens_per_move` | 每步 token 开销（效率） |
+
+### 决策质量分析（`blockblast analyze <run_dir>`）
+
+对已完成的 run 做离线深度分析——环境确定性使每一步局面都可以精确重放，再与单步最优对照：
+
+| 指标 | 含义 |
+|---|---|
+| `greedy_efficiency` | 实际得分 / 单步最优得分（greedy 基线恒为 1.000，天然校验） |
+| `clear_conversion` / `missed_clears` | 有消行机会时抓住了多少次 / 错过多少次 |
+| `final_fill` / `final_empty_regions` | 终局填充率与空格碎片化程度（死因画像） |
+| `invalid_kinds` | 非法步归类：越界/重叠、用过的槽位、解析失败…… |
+
+实测示例：qwen3.7-plus 的 `greedy_efficiency=0.974`、消行机会 13/13 全中——它的单步决策接近最优，低分主要来自对局被平台中断；而 heuristic 效率 0.979 却能活 64 步，说明**差距在布局质量（终局碎片化 1.7 vs 7.7 个空区）而非单步贪心**。
 
 ## 接入任意 LLM
 
