@@ -20,3 +20,6 @@ inspect-logs/
 
 # OS
 .DS_Store
+
+# portfolio build byproducts
+portfolio/preview-full.png

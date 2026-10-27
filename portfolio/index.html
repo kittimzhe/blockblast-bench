@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>blockblast-bench 项目作品集</title>
+<style>
+  :root {
+    --ink:#1b2130; --muted:#6b7585; --line:#dfe4ec; --bg:#f2f4f8;
+    --accent:#3b76f6; --accent2:#7c3aed; --good:#0f9d58; --warn:#e8710a;
+    --card:#ffffff;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#c9cfda; font:10.5pt/1.62 -apple-system,"PingFang SC","Hiragino Sans GB","Segoe UI",sans-serif; color:var(--ink); }
+  .page {
+    width:210mm; min-height:296mm; margin:10mm auto; background:var(--card);
+    padding:12mm 14mm 12mm; position:relative; box-shadow:0 2px 18px rgba(20,30,60,.18);
+    display:flex; flex-direction:column; page-break-after:always; overflow:hidden;
+  }
+  @media print {
+    body { background:#fff; }
+    .page { margin:0; box-shadow:none; width:auto; min-height:auto; height:296mm; }
+    @page { size:A4; margin:0; }
+  }
+  .pageno { position:absolute; bottom:6mm; right:14mm; font-size:8pt; color:var(--muted); }
+  .footmark { position:absolute; bottom:6mm; left:14mm; font-size:8pt; color:var(--muted); }
+
+  h1 { font-size:24pt; letter-spacing:.5px; line-height:1.2; }
+  h2 { font-size:14pt; margin-bottom:3mm; display:flex; align-items:center; gap:7px; }
+  h2 .no { display:inline-flex; width:22px; height:22px; border-radius:6px; background:var(--accent); color:#fff;
+          font-size:11pt; align-items:center; justify-content:center; flex:none; }
+  h3 { font-size:11pt; margin-bottom:1.5mm; }
+  p  { margin-bottom:2mm; }
+  .muted { color:var(--muted); }
+  .small { font-size:9pt; }
+  .tiny  { font-size:8pt; }
+  b.acc  { color:var(--accent); }
+  code { font-family:"SF Mono",Menlo,Consolas,monospace; font-size:8.5pt; background:#eef2f9; border-radius:4px; padding:0 4px; }
+
+  /* ---------- cover ---------- */
+  .cover-band { background:linear-gradient(135deg,#17224d 0%,#273a8f 55%,#3b76f6 100%); color:#fff;
+    border-radius:14px; padding:7mm 9mm 6.5mm; margin-bottom:5mm; }
+  .cover-band .kicker { font-size:9pt; opacity:.85; letter-spacing:2px; margin-bottom:1.4mm; }
+  .cover-band .sub { font-size:10.5pt; margin-top:2.4mm; opacity:.92; max-width:152mm; }
+  .cover-band .links { margin-top:2.8mm; font-size:8.5pt; opacity:.85; }
+  .kpis { display:grid; grid-template-columns:repeat(6,1fr); gap:2.6mm; margin-bottom:5mm; }
+  .kpi { background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:2.4mm 1.6mm; text-align:center; }
+  .kpi b { display:block; font-size:14pt; color:var(--accent); line-height:1.2; }
+  .kpi span { font-size:8pt; color:var(--muted); }
+  .twocol { display:grid; grid-template-columns:1.25fr 1fr; gap:6mm; }
+  .panel { background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:4mm 4.5mm; }
+  .tags { display:flex; flex-wrap:wrap; gap:1.6mm; margin-top:2mm; }
+  .tag { font-size:8pt; background:#e8eefc; color:#2b5bd7; border-radius:99px; padding:.6mm 2.6mm; }
+  ul.compact { padding-left:4.5mm; }
+  ul.compact li { margin-bottom:1.4mm; }
+
+  /* ---------- figures ---------- */
+  figure { background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:2.4mm; text-align:center; }
+  figure img { max-width:100%; border-radius:6px; image-rendering:pixelated; }
+  figcaption { font-size:7.6pt; color:var(--muted); margin-top:1.2mm; line-height:1.4; }
+  .fig3 { display:grid; grid-template-columns:repeat(3,1fr); gap:3.4mm; margin:2.4mm 0 1.4mm; }
+  .fig3 img { height:38mm; width:auto; }
+
+  /* ---------- architecture ---------- */
+  .arch { display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; margin:3mm 0 1mm; }
+  .arch .box { border:1.5px solid var(--accent); border-radius:9px; padding:2.6mm 2.8mm; background:#f6f9ff; }
+  .arch .box.alt { border-color:var(--accent2); background:#faf6ff; }
+  .arch .box h4 { font-size:9.5pt; margin-bottom:1mm; color:var(--accent); }
+  .arch .box.alt h4 { color:var(--accent2); }
+  .arch .box div { font-size:7.8pt; color:var(--muted); line-height:1.5; }
+  .arrow-row { text-align:center; color:var(--muted); font-size:9pt; margin:.6mm 0; }
+
+  /* ---------- tables ---------- */
+  table { border-collapse:collapse; width:100%; font-size:8.8pt; background:#fff; }
+  th,td { border-bottom:1px solid var(--line); padding:1.7mm 2.4mm; text-align:right; }
+  th:first-child, td:first-child { text-align:left; }
+  th { background:#eef2f9; font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .tablebox { border:1px solid var(--line); border-radius:9px; overflow:hidden; }
+
+  /* ---------- ladder chart ---------- */
+  .ladder { margin:3mm 0; }
+  .lrow { display:grid; grid-template-columns:34mm 1fr 18mm; align-items:center; gap:3mm; margin-bottom:2mm; }
+  .lrow .name { font-size:9pt; text-align:right; }
+  .lrow .bar { height:6.4mm; border-radius:4px; background:linear-gradient(90deg,#9db9ff,#3b76f6); position:relative; }
+  .lrow .bar.llm { background:linear-gradient(90deg,#ffc69e,#e8710a); }
+  .lrow .val { font-size:9pt; font-weight:700; color:var(--accent); }
+  .lrow .val.llm { color:var(--warn); }
+
+  /* ---------- findings ---------- */
+  .findings { display:grid; grid-template-columns:repeat(3,1fr); gap:4mm; margin-top:3mm; }
+  .find { border-top:3px solid var(--accent); background:var(--bg); border-radius:0 0 9px 9px; padding:3mm 3.4mm; }
+  .find h4 { font-size:9.5pt; margin-bottom:1.4mm; }
+  .find p { font-size:8.3pt; color:#3a4254; margin:0; }
+  .find .num { font-size:14pt; font-weight:800; color:var(--accent); }
+
+  /* ---------- pyramid ---------- */
+  .pyr { display:flex; flex-direction:column; align-items:center; gap:1.6mm; margin:3mm 0 2mm; }
+  .pyr div { color:#fff; text-align:center; font-size:8.3pt; padding:1.8mm 0; border-radius:6px; line-height:1.4; }
+  .pyr .l1 { width:38%; background:#17224d; } .pyr .l2 { width:58%; background:#273a8f; }
+  .pyr .l3 { width:78%; background:#3b76f6; } .pyr .l4 { width:96%; background:#7ba3f9; }
+
+  .timeline { border-left:2.5px solid var(--line); margin-left:2mm; padding-left:4.5mm; }
+  .tl { position:relative; margin-bottom:2.6mm; font-size:8.8pt; }
+  .tl::before { content:""; position:absolute; left:-6.1mm; top:1.6mm; width:2.6mm; height:2.6mm;
+    border-radius:50%; background:var(--accent); }
+  .tl b { display:block; }
+  .tl span { color:var(--muted); font-size:8.2pt; }
+
+  .check li { list-style:none; margin-bottom:1.5mm; padding-left:5.5mm; position:relative; font-size:9pt; }
+  .check li::before { content:"✓"; position:absolute; left:0; color:var(--good); font-weight:800; }
+  .sect { margin-bottom:6mm; }
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1 : 封面 + 概览 ================= -->
+<div class="page">
+  <div class="cover-band">
+    <div class="kicker">项目作品集 · AI AGENT BENCHMARK</div>
+    <h1>blockblast-bench</h1>
+    <div class="sub">复刻 Block Blast!（8×8 方块消除）游戏机制的<b>确定性评测环境</b>，让大模型与经典算法同台对局，量化评测 LLM 的<b>空间规划、长程决策与指令遵循</b>能力。</div>
+    <div class="links">GitHub：github.com/kittimzhe/blockblast-bench（MIT 开源）&nbsp;&nbsp;|&nbsp;&nbsp;在线报告：kittimzhe.github.io/blockblast-bench</div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><b>0</b><span>第三方依赖<br>纯标准库</span></div>
+    <div class="kpi"><b>105</b><span>自动化测试<br>四层金字塔</span></div>
+    <div class="kpi"><b>6</b><span>Agent 梯度<br>random→beam→LLM</span></div>
+    <div class="kpi"><b>10140</b><span>单局最高分<br>beam-80 · 1004 步</span></div>
+    <div class="kpi"><b>2×CI</b><span>Python 3.9/3.13<br>全绿</span></div>
+    <div class="kpi"><b>100%</b><span>确定性复现<br>同种子=同牌序</span></div>
+  </div>
+
+  <div class="twocol sect">
+    <div>
+      <h2><span class="no">1</span>为什么做这个项目</h2>
+      <p>现有 LLM 基准大多测知识与代码，<b>缺少可复现、可量化的「空间规划 + 长程决策」评测</b>。Block Blast! 恰好是一个规则极简但策略深度极高的载体：放错一块，几十步后才暴露恶果。</p>
+      <ul class="compact small">
+        <li><b>确定性公平</b>——同一种子 = 同一牌序，所有 Agent 面对完全相同的发牌，分差只来自决策质量；</li>
+        <li><b>梯度化参照系</b>——random / greedy / heuristic / beam 四级经典基线，把 LLM 的成绩「放进刻度尺」解读；</li>
+        <li><b>失败也是数据</b>——非法落子不视为 bug，而是「指令遵循」的测量对象（反馈重试 + 非法率指标）；</li>
+        <li><b>全链路可观测</b>——每局完整转录 → 决策质量分析 → GIF 回放 → HTML 报告，败局可逐帧归因。</li>
+      </ul>
+      <div class="tags">
+        <span class="tag">Python 3.9+</span><span class="tag">零依赖设计</span><span class="tag">LLM Agent</span>
+        <span class="tag">Beam Search</span><span class="tag">inspect_ai</span><span class="tag">GitHub Actions CI</span>
+        <span class="tag">GIF89a 手写编码器</span><span class="tag">GitHub Pages</span><span class="tag">pytest 不变量/模糊测试</span>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>游戏机制（忠实复刻）</h3>
+      <ul class="compact small">
+        <li>8×8 棋盘，托盘 3 块<b>全部用完才补发</b>；方块不可旋转/翻转（19 种形状库）；</li>
+        <li>整行/整列同时消除，连续消除累积 combo 倍率，全清 +300；</li>
+        <li>剩余方块无处可放即终局；计分为可配置的近似复刻（+1/格、行分 10/30/60…、combo 封顶 ×4、全清 +300）。</li>
+      </ul>
+      <h3 style="margin-top:2.6mm">评测协议</h3>
+      <ul class="compact small">
+        <li>默认种子集 2024–2033 共 10 局，所有 Agent 同集对比；</li>
+        <li>LLM 观测：坐标标注文本棋盘 + 托盘小图；动作：<code>{"piece","row","col"}</code>；</li>
+        <li>非法步反馈后每步至多重试 2 次，并记入 invalid_per_move 指标。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="twocol">
+    <div class="panel">
+      <h3>项目速览</h3>
+      <div class="tablebox" style="margin-top:1.6mm"><table>
+        <tr><td style="text-align:left">代码规模</td><td>3435 行源码 + 1567 行测试（测试占比 31%）</td></tr>
+        <tr><td style="text-align:left">运行环境</td><td>Python 3.9–3.13，零第三方依赖，克隆即跑</td></tr>
+        <tr><td style="text-align:left">评测规模</td><td>10 个入库 run，累计 <b>7875 步</b>真实对局数据</td></tr>
+        <tr><td style="text-align:left">开源状态</td><td>MIT · CI 双版本全绿 · Pages 在线报告 · 打包就绪</td></tr>
+      </table></div>
+    </div>
+    <div class="panel">
+      <h3>最具代表性的三个技术难点</h3>
+      <ul class="compact small">
+        <li><b>确定性与可续跑的统一</b>——用「重放转录恢复状态」把断点续跑做成无损操作，同时成为 golden 测试的地基；</li>
+        <li><b>手写 GIF89a + LZW 编码器</b>——为守住零依赖承诺，自行实现图像编码，并用 Pillow 做像素级反向校验；</li>
+        <li><b>把平台故障与模型能力解耦</b>——三类网络故障各自机制化处理，使评测结论不被基础设施噪声污染。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footmark">blockblast-bench · 项目作品集</div><div class="pageno">1 / 4</div>
+</div>
+
+<!-- ================= PAGE 2 : 系统设计 ================= -->
+<div class="page">
+  <div>
+    <h2><span class="no">2</span>一张图看懂评测对象</h2>
+    <div class="fig3">
+      <figure><img src="assets/beam-frame.png" alt="beam 对局"><figcaption><b>beam 搜索基线</b>（托盘周期精确前瞻）<br>单局 6141 分 / 587 步，板面始终保持低碎片化</figcaption></figure>
+      <figure><img src="assets/heur-frame.png" alt="heuristic 对局"><figcaption><b>heuristic 基线</b>（贪心 + 板面形状特征）<br>单局 1142 分 / 116 步，有形状管理意识</figcaption></figure>
+      <figure><img src="assets/qwen-frame.png" alt="qwen 对局"><figcaption><b>qwen3.7-plus（LLM）</b>最佳局 862 分 / 87 步<br>37 次消行 · combo×7，超过 heuristic 均值</figcaption></figure>
+    </div>
+    <p class="tiny muted">▲ 各 Agent 实战对局 GIF 回放中的关键帧（琥珀色=新落子，底部 HUD 为步数/得分/combo）。完整动图见仓库 README 与在线报告。</p>
+  </div>
+
+  <h2><span class="no">3</span>系统架构：评测流水线</h2>
+  <div class="arch">
+    <div class="box"><h4>① 游戏引擎 env</h4><div>19 形状库 · 放置/消除/计分纯函数 · 种子化 RNG · 不可变 Observation · 敌意输入只抛 InvalidActionError 且状态零污染</div></div>
+    <div class="box"><h4>② Agent 层</h4><div>random / greedy / heuristic / <b>beam（托盘周期精确前瞻）</b> / LLM（任意 OpenAI 兼容端点，urllib 实现）</div></div>
+    <div class="box"><h4>③ 评测 harness</h4><div>固定种子集 · 并发评测 · 非法步反馈重试 · <b>断点续跑 --resume</b> · 异常兜底不炸整轮 · JSON 转录落盘</div></div>
+    <div class="box"><h4>④ 结果层</h4><div>runs.jsonl 排行榜（追加式） · summary.json 聚合 · 每局完整 transcript（+LLM 对话可选）</div></div>
+  </div>
+  <div class="arrow-row">▼ 同一份转录数据，四路消费 ▼</div>
+  <div class="arch">
+    <div class="box alt"><h4>决策质量分析</h4><div>analyze：逐步对照单步最优 → 贪心效率 / 消行把握 / 漏消次数 / 终局碎片化 / 非法步分类</div></div>
+    <div class="box alt"><h4>GIF 回放</h4><div>手写 GIF89a+LZW 编码器（≈150 行，零图像依赖），测试用 Pillow 像素级解码校验</div></div>
+    <div class="box alt"><h4>HTML 报告</h4><div>单文件（零 JS/外部资源）：排行榜 + KPI 卡片 + SVG 逐局图表，部署 GitHub Pages</div></div>
+    <div class="box alt"><h4>inspect_ai Task</h4><div>单文件适配器接入 UK AISI 官方评测框架：自定义 solver 游戏循环 + 双 scorer</div></div>
+  </div>
+
+  <div class="twocol sect" style="margin-top:5mm">
+    <div>
+      <h3>关键工程决策</h3>
+      <div class="tablebox"><table>
+        <tr><th style="width:30%">决策</th><th>理由与收益</th></tr>
+        <tr><td><b>零第三方依赖</b></td><td style="text-align:left">克隆即跑、十年可复现；连 GIF 编码器都手写（LZW 压缩），Pillow 仅作测试期像素校验</td></tr>
+        <tr><td><b>完全确定性</b></td><td style="text-align:left">同种子 + 同动作序列 ⇒ 同状态，是公平对比、断点续跑、golden 测试三件事的共同地基</td></tr>
+        <tr><td><b>非法步 = 指标</b></td><td style="text-align:left">不替模型纠错，反馈后重试并记入 invalid_per_move——「指令遵循」成为一等测量维度</td></tr>
+        <tr><td><b>截断局保留分数</b></td><td style="text-align:left">网络故障不丢数据；--resume 从断点无损续跑（重放转录恢复精确状态）</td></tr>
+        <tr><td><b>追加式排行榜</b></td><td style="text-align:left">runs.jsonl 永不改写历史，每条成绩可溯源到完整转录与对话</td></tr>
+      </table></div>
+    </div>
+    <div>
+      <h3>生产级网络加固（实战倒逼）</h3>
+      <p class="small muted">对真实平台评测 15+ 小时，遭遇三类故障，全部转化为带回归测试的机制：</p>
+      <div class="timeline">
+        <div class="tl"><b>读超时 / 慢推理模型</b><span>指数退避（2s 起、60s 封顶）+ 超时自适应翻倍（600s 封顶）</span></div>
+        <div class="tl"><b>HTTP 200 空响应体</b><span>定义 TransientEndpointError 瞬态错误类；harness 异常兜底，单局失败不炸整轮 10 局</span></div>
+        <div class="tl"><b>端点级 TLS 封禁</b><span>诊断为网关级限流（全模型 5s 齐刷刷掐断）→ 冷却等待 + 一条命令断点续跑，零数据损失</span></div>
+      </div>
+      <p class="small" style="margin-top:2mm">每类故障都有<b>故障注入测试</b>（timeout / 429 / 5xx / 空 200）钉死行为。</p>
+    </div>
+  </div>
+
+  <div class="footmark">blockblast-bench · 项目作品集</div><div class="pageno">2 / 4</div>
+</div>
+
+<!-- ================= PAGE 3 : 结果与发现 ================= -->
+<div class="page">
+  <div>
+    <h3>beam 基线的核心洞察：托盘周期 = 精确搜索视界</h3>
+    <p class="small">托盘 3 块全部用完才补发、周期内 RNG 不推进 ⇒ <b>对当前托盘的全排列搜索是严格精确的</b>。BeamAgent 在该视界内做束搜索，叶子复用 heuristic 的板面特征评估。宽度 80 时均分达 heuristic 的 <b class="acc">6.7 倍</b>，单局突破 <b class="acc">10140 分（1004 步）</b>——证明该游戏天花板远未触及，也为 LLM 留下明确的能力标尺。</p>
+  </div>
+
+  <h2><span class="no">4</span>评测结果：能力阶梯</h2>
+  <div class="twocol sect">
+    <div>
+      <div class="ladder">
+        <div class="lrow"><div class="name">random</div><div class="bar" style="width:4%"></div><div class="val">57</div></div>
+        <div class="lrow"><div class="name">greedy（单步最优）</div><div class="bar" style="width:7%"></div><div class="val">169</div></div>
+        <div class="lrow"><div class="name muted">qwen3.7-plus（LLM）</div><div class="bar llm" style="width:11%"></div><div class="val llm">287</div></div>
+        <div class="lrow"><div class="name">heuristic（形状管理）</div><div class="bar" style="width:17%"></div><div class="val">587</div></div>
+        <div class="lrow"><div class="name">beam-40（周期前瞻）</div><div class="bar" style="width:54%"></div><div class="val">2031</div></div>
+        <div class="lrow"><div class="name">beam-80</div><div class="bar" style="width:100%"></div><div class="val">3953</div></div>
+      </div>
+      <p class="small">阶梯本身就是解读器：<b>超过 greedy ⇒ 有一步收益规划；逼近 heuristic ⇒ 有板面管理；逼近 beam ⇒ 具备跨托盘周期的长程规划</b>。qwen 均分 287 居 greedy 与 heuristic 之间，但其最佳单局 862 已超 heuristic 均值。</p>
+    </div>
+    <figure><img src="assets/report-leaderboard.png" alt="排行榜" style="image-rendering:auto"><figcaption>在线 HTML 报告的实时排行榜（GitHub Pages 自动部署），每行可溯源至完整对局转录</figcaption></figure>
+  </div>
+
+  <h2><span class="no">5</span>三个研究发现</h2>
+  <div class="findings sect">
+    <div class="find"><h4><span class="num">0.954</span>｜LLM 低分是截断假象</h4>
+      <p>决策分析显示 qwen 单步效率 0.954、消行把握 96%——<b>不是不会玩，而是平台截断压低了均分</b>。最佳完整局 862 分（37 消行 · combo×7）即为能力证据。评测结论必须区分「能力不足」与「基础设施损耗」。</p></div>
+    <div class="find"><h4><span class="num">99→74→72%</span>｜消行把握率度量「远见」</h4>
+      <p>搜索预算越大，Agent 越敢<b>放弃即时消行</b>去凑周期内更大的连消（heuristic 99% → beam-40 74% → beam-80 72%），死局碎片化同步从 3.5 降到 1.4 个空区。「延迟满足」首次成为可测量的行为谱系。</p></div>
+    <div class="find"><h4><span class="num">重尾</span>｜max/median 优于 mean</h4>
+      <p>单局分数呈重尾分布——一步之差改写整局（蝴蝶效应）。宽度敏感性实验中宽度 20 均分反而低于 10。小样本下 <b>max 与中位数比均值更能反映峰值能力</b>，该结论直接适用于 LLM 评测的指标选型。</p></div>
+  </div>
+
+  <div class="twocol">
+    <div>
+      <h3>beam 宽度敏感性（10 局/档，一次性实验）</h3>
+      <div class="tablebox"><table>
+        <tr><th>宽度</th><th>1</th><th>5</th><th>10</th><th>20</th><th>40</th><th>80</th><th>160</th></tr>
+        <tr><td>mean</td><td>473</td><td>1336</td><td>1945</td><td>1448</td><td>2031</td><td><b>3953</b></td><td>2537</td></tr>
+        <tr><td>max</td><td>1142</td><td>4567</td><td>4719</td><td>6366</td><td>6141</td><td><b>10140</b></td><td>5900</td></tr>
+      </table></div>
+      <p class="tiny muted" style="margin-top:1.6mm">搜索预算显著抬升上限（1.1k→10k+），但宽度 ≥20 后均值进入高方差区——与「重尾」发现互为印证。</p>
+    </div>
+    <figure><img src="assets/report-card.png" alt="beam-80 KPI 卡片" style="image-rendering:auto"><figcaption>beam-80 的 run 画像卡片：KPI + 逐局得分 SVG 图表（纯内联 SVG，零 JS），万分局一目了然</figcaption></figure>
+  </div>
+  <div class="footmark">blockblast-bench · 项目作品集</div><div class="pageno">3 / 4</div>
+</div>
+
+<!-- ================= PAGE 4 : 工程质量与交付 ================= -->
+<div class="page">
+  <h2><span class="no">6</span>工程质量：四层测试金字塔（105 用例，CI 双版本全绿）</h2>
+  <div class="twocol sect">
+    <div>
+      <div class="pyr">
+        <div class="l1">单元测试<br><span class="tiny">形状库 · 计分公式 · 放置/消除规则</span></div>
+        <div class="l2">不变量随机对测 + 模糊测试<br><span class="tiny">数百局逐步断言守恒律 · 3000 敌意输入打不坏引擎</span></div>
+        <div class="l3">Golden 钉死 + 回归带<br><span class="tiny">固定种子结果锁定 · 基线分数区间 · 能力阶梯必须成立</span></div>
+        <div class="l4">端到端冒烟 + 故障注入<br><span class="tiny">9 个 CLI 子命令 · 断点续跑 · 网络故障(timeout/429/5xx/空200) · GIF 像素级解码校验</span></div>
+      </div>
+    </div>
+    <div>
+      <h3>两个自校验设计</h3>
+      <ul class="compact small">
+        <li><b>greedy 效率恒等于 1.000</b>——它就是「单步最优」的定义本身，分析器一旦偏离立即报警（分析器与引擎互为校验）；</li>
+        <li><b>golden 测试跨版本验证</b>——Python 3.9 与 3.13 给出比特级一致的对局结果，确定性承诺有测试背书。</li>
+      </ul>
+      <h3 style="margin-top:3mm">安全与规范</h3>
+      <ul class="compact small">
+        <li>API key 仅走环境变量；开源前两轮全历史扫描（<code>git grep &lt;key&gt; $(git rev-list --all)</code>）零泄漏；</li>
+        <li>对话存档只存 prompt/回复文本，永不落盘鉴权头。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sect">
+    <h2><span class="no">7</span>交付清单</h2>
+    <div class="twocol">
+      <ul class="check">
+        <li><b>可运行基准</b>：9 个 CLI 子命令（demo/run/leaderboard/replay/gif/watch/analyze/shapes/report）</li>
+        <li><b>开源仓库</b>：MIT · 中英双语 README · 贡献指南 · GitHub Actions CI（3.9/3.13 矩阵）</li>
+        <li><b>在线评测报告</b>：GitHub Pages 单文件 HTML（排行榜/KPI 卡片/SVG 图表/GIF 回放）</li>
+        <li><b>真实评测数据</b>：4 档经典基线 + qwen3.7-plus 官方 10 局，全部可溯源复现</li>
+      </ul>
+      <ul class="check">
+        <li><b>双框架接入</b>：原生 CLI + inspect_ai Task（UK AISI 官方评测框架）</li>
+        <li><b>断点续跑体系</b>：平台封禁期间零数据损失，解封后一条命令续跑</li>
+        <li><b>发布就绪</b>：wheel 构建 + 全新 venv 安装实测通过，随时可上 PyPI</li>
+        <li><b>研究产出</b>：能力阶梯解读法 · 消行把握率行为谱系 · 重尾指标选型结论</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="twocol">
+    <div class="panel">
+      <h3>个人贡献与角色（独立完成）</h3>
+      <ul class="compact small">
+        <li>游戏机制逆向与确定性环境设计、全部 Agent 与评测 harness 实现；</li>
+        <li>真实平台 15+ 小时评测运维：三类网络故障的诊断、加固与回归测试；</li>
+        <li>测试体系（105 用例）、CI、开源发布、文档与在线报告全链路。</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>下一步规划</h3>
+      <ul class="compact small">
+        <li><b>多模型横评</b>：DeepSeek / GPT / Doubao 系列同种子对比，扩充排行榜；</li>
+        <li><b>推理增益实验</b>：--allow-reasoning（先分析后落子）vs 直出 JSON 的同种子 A/B；</li>
+        <li><b>更强上界</b>：MCTS / 跨周期期望搜索基线；PyPI 发布与社区成绩征集。</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footmark">blockblast-bench · 项目作品集 · github.com/kittimzhe/blockblast-bench</div><div class="pageno">4 / 4</div>
+</div>
+
+</body>
+</html>
