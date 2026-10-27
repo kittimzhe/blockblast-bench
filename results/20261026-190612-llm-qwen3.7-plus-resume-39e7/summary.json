@@ -259,5 +259,6 @@
       },
       "error": "network failure after 8 attempts: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>"
     }
-  ]
+  ],
+  "resumed_from": "20261026-185722-llm-qwen3.7-plus-resume-0d90"
 }

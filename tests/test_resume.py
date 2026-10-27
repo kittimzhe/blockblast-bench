@@ -5,7 +5,7 @@ import urllib.error
 
 import pytest
 
-from blockblast.agents import HeuristicAgent
+from blockblast.agents import GreedyAgent, HeuristicAgent
 from blockblast.agents.base import AgentError
 from blockblast.agents.llm_agent import LLMAgent, LLMConfig
 from blockblast.env import BlockBlastEnv
@@ -199,3 +199,35 @@ def test_unexpected_agent_exception_does_not_kill_run():
     assert result.reason == "agent_error"
     assert "boom" in result.error
     assert result.moves == 0
+
+
+def test_resume_records_lineage(tmp_path):
+    """resume_eval must stamp resumed_from so chains stay traceable."""
+    from blockblast.harness import EvalConfig, resume_eval, run_eval
+    from blockblast.report import write_run
+
+    cfg = EvalConfig(episodes=2, seed_base=2024, max_moves=6, results_dir=tmp_path)
+    first = run_eval(lambda: GreedyAgent(), cfg, agent_name="greedy")
+    write_run(first, tmp_path)
+    assert first.resumed_from is None
+
+    second = resume_eval(lambda: GreedyAgent(), tmp_path / first.run_id, cfg, "greedy")
+    write_run(second, tmp_path)
+    assert second.resumed_from == first.run_id
+
+    summary = json.loads((tmp_path / second.run_id / "summary.json").read_text())
+    assert summary["resumed_from"] == first.run_id
+
+
+def test_collapse_resume_chains_keeps_only_final_link():
+    from blockblast.report import collapse_resume_chains
+
+    rows = [
+        {"run_id": "a", "resumed_from": None},
+        {"run_id": "b", "resumed_from": "a"},
+        {"run_id": "c", "resumed_from": "b"},
+        {"run_id": "standalone", "resumed_from": None},
+        {"run_id": "legacy"},  # no lineage metadata at all
+    ]
+    kept = {r["run_id"] for r in collapse_resume_chains(rows)}
+    assert kept == {"c", "standalone", "legacy"}

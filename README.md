@@ -38,7 +38,7 @@ python3 -m blockblast watch results/<run_id>/episodes/seed_2024.json --delay 0.1
 ```
 
 > macOS 系统 Python 对字节码缓存目录有权限限制时，在命令前加 `PYTHONDONTWRITEBYTECODE=1`。
-> 测试：`python3 -m pytest`（105 个用例，Python 3.9+；GIF 像素级校验需额外装 pillow）。**English version: [README.en.md](README.en.md)**
+> 测试：`python3 -m pytest`（107 个用例，Python 3.9+；GIF 像素级校验需额外装 pillow）。**English version: [README.en.md](README.en.md)**
 
 ## 测试策略
 
@@ -49,7 +49,7 @@ CI 在 Python 3.9 与 3.13 上跑全部用例，按四层组织：
 | 单元 | `test_pieces/scoring/env/render` | 方块库、计分公式、放置/消除规则、文本渲染 |
 | **不变量随机对测** | `test_invariants.py` | 数百局随机对局逐步断言：格子数守恒、消除行列必空、combo/分数账目可复算、托盘生命周期、game over ⇔ 无合法步；**敌意输入模糊测试**（越界/错误类型/用过的槽/畸形动作 → 只会抛 `InvalidActionError` 且状态零污染）；**golden 测试**钉死固定种子的最终结果——引擎语义一旦改变立即报警 |
 | 回归带 | `test_regression_bands.py` | 基线分数区间 + 能力阶梯（random < greedy < heuristic）必须成立 |
-| 端到端 | `test_cli_smoke.py`、`test_agents/harness/resume/analysis/animate` | 8 个 CLI 子命令全覆盖、产物文件、断点续跑、网络故障注入（超时/429/5xx/200 空 body）、GIF 像素级解码校验 |
+| 端到端 | `test_cli_smoke.py`、`test_agents/harness/resume/analysis/animate` | 8 个 CLI 子命令全覆盖、产物文件、断点续跑与**续跑血缘**（resumed_from 可追溯，排行榜自动折叠同链中间态）、网络故障注入（超时/429/5xx/200 空 body）、GIF 像素级解码校验 |
 
 内置自校验：greedy 基线的决策效率恒等于 1.000（它就是单步最优的定义），任何偏离都是分析器或引擎的 bug。
 
@@ -90,7 +90,9 @@ CI 在 Python 3.9 与 3.13 上跑全部用例，按四层组织：
 
 被测 LLM 的成绩落在这个梯度的哪个位置，直观反映其空间规划能力：**不如 random = 连合法放置都难以维持；超过 greedy = 具备一步收益规划；逼近 heuristic = 有板面形状管理意识；逼近 beam = 具备跨托盘周期的长程规划**。
 
-**LLM 实测**（qwen3.7-plus，同种子集 10 局，2026-10-26）：mean 286.9 / median 246 / **max 862**（87 步、37 行、combo 7，单局超过 heuristic 均值），mean_moves 32.1，best_combo 7，invalid_per_move 0.0125——**已超过 greedy 基线，位居排行榜第 2**。决策分析：单步效率 0.954、消行机会把握 125/130 = 96%。其中 6 局被端点网络故障（读超时 / TLS 连接被掐断）截断，`--resume` 可从断点续跑补完；被截断的局也计入部分分数。
+**LLM 实测**（qwen3.7-plus，同种子集 10 局，2026-10-27 完整版）：mean **416.8** / median 405 / **max 862**（87 步、37 行、combo 7，单局超过 heuristic 均值），mean_moves 47.6、mean_lines 18.9、invalid_per_move 0.0126、tokens/步 7895——**10 局全部自然终局（`board_full` ×10，完整终局率 100%）**，稳居排行榜经典基线之间。决策分析：单步效率 0.953、消行机会把握 184/192 = 96%、终局碎片化 4.7 个空区。
+
+> **一个方法论发现**：这份数据是在平台网络故障导致 6 局截断后，用 `--resume` 从断点续跑补完的。对比截断版（mean 286.9）与完整版（mean 416.8）：**均分被基础设施损耗压低了 31%，而单步效率（0.954 → 0.953）与消行把握（96% → 96%）几乎不变**。这说明两类指标的稳健性截然不同——*过程类指标（单步效率）对截断免疫，结果类指标（均分）高度敏感*。因此评测报告必须同时给出完整终局率，否则无法区分「模型能力不足」与「基础设施损耗」。
 
 ## 游戏规则（忠实复刻）
 

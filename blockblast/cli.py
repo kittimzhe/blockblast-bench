@@ -193,7 +193,7 @@ def cmd_run(args) -> int:
 
 
 def cmd_leaderboard(args) -> int:
-    rows = load_runs(Path(args.results_dir))
+    rows = load_runs(Path(args.results_dir), collapse_resumes=not args.all_runs)
     text = leaderboard_md(rows)
     print(text, end="")
     return 0
@@ -380,6 +380,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     board = sub.add_parser("leaderboard", help="print the markdown leaderboard")
     board.add_argument("--results-dir", default="results")
+    board.add_argument("--all-runs", action="store_true",
+                       help="also list superseded resume-chain snapshots")
     board.set_defaults(func=cmd_leaderboard)
 
     replay = sub.add_parser("replay", help="pretty-print a saved episode transcript")

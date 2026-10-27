@@ -81,6 +81,13 @@ class RunResult:
     scoring: Dict[str, Any]
     started_at: str
     results: List[EpisodeResult] = field(default_factory=list)
+    resumed_from: Optional[str] = None
+    """Run id this run continued from, when produced by ``resume_eval``.
+
+    Makes a resume chain traceable: reports can collapse a chain to its
+    final state instead of showing every intermediate snapshot as a
+    separate (and misleadingly comparable) leaderboard row.
+    """
 
 
 def replay_transcript(env: BlockBlastEnv, transcript: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -352,6 +359,7 @@ def resume_eval(
         scoring=cfg.scoring.to_dict(),
         started_at=started_at,
         results=results,
+        resumed_from=summary.get("run_id") or prior_run_dir.name,
     )
 
 

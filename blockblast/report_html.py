@@ -194,7 +194,7 @@ def generate_report(
     results_dir = Path(results_dir)
     output = Path(output)
     runs = sorted(
-        load_runs(results_dir),
+        load_runs(results_dir, collapse_resumes=True),
         key=lambda r: float(r.get("aggregates", {}).get("mean_score") or 0),
         reverse=True,
     )

@@ -1,0 +1,136 @@
+{
+  "run_id": "20261027-111142-llm-qwen3.7-plus-resume-final-3b4e",
+  "agent": "llm",
+  "model": "qwen3.7-plus",
+  "episodes": [
+    {
+      "seed": 2024,
+      "score": 123,
+      "moves": 17,
+      "reason": "board_full",
+      "greedy_efficiency": 0.992,
+      "missed_clears": 0,
+      "final_fill": 0.516,
+      "final_empty_regions": 4,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2025,
+      "score": 862,
+      "moves": 87,
+      "reason": "board_full",
+      "greedy_efficiency": 0.972,
+      "missed_clears": 1,
+      "final_fill": 0.562,
+      "final_empty_regions": 8,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2026,
+      "score": 562,
+      "moves": 59,
+      "reason": "board_full",
+      "greedy_efficiency": 0.865,
+      "missed_clears": 4,
+      "final_fill": 0.672,
+      "final_empty_regions": 7,
+      "invalid_kinds": {
+        "out_of_bounds_or_overlap": 2
+      }
+    },
+    {
+      "seed": 2027,
+      "score": 333,
+      "moves": 38,
+      "reason": "board_full",
+      "greedy_efficiency": 0.974,
+      "missed_clears": 0,
+      "final_fill": 0.453,
+      "final_empty_regions": 5,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2028,
+      "score": 622,
+      "moves": 71,
+      "reason": "board_full",
+      "greedy_efficiency": 0.961,
+      "missed_clears": 1,
+      "final_fill": 0.344,
+      "final_empty_regions": 1,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2029,
+      "score": 378,
+      "moves": 44,
+      "reason": "board_full",
+      "greedy_efficiency": 0.952,
+      "missed_clears": 1,
+      "final_fill": 0.578,
+      "final_empty_regions": 6,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2030,
+      "score": 219,
+      "moves": 29,
+      "reason": "board_full",
+      "greedy_efficiency": 0.991,
+      "missed_clears": 0,
+      "final_fill": 0.453,
+      "final_empty_regions": 2,
+      "invalid_kinds": {
+        "out_of_bounds_or_overlap": 2
+      }
+    },
+    {
+      "seed": 2031,
+      "score": 437,
+      "moves": 52,
+      "reason": "board_full",
+      "greedy_efficiency": 0.98,
+      "missed_clears": 0,
+      "final_fill": 0.453,
+      "final_empty_regions": 4,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2032,
+      "score": 200,
+      "moves": 29,
+      "reason": "board_full",
+      "greedy_efficiency": 0.976,
+      "missed_clears": 0,
+      "final_fill": 0.516,
+      "final_empty_regions": 6,
+      "invalid_kinds": {}
+    },
+    {
+      "seed": 2033,
+      "score": 432,
+      "moves": 50,
+      "reason": "board_full",
+      "greedy_efficiency": 0.949,
+      "missed_clears": 1,
+      "final_fill": 0.578,
+      "final_empty_regions": 4,
+      "invalid_kinds": {
+        "out_of_bounds_or_overlap": 2
+      }
+    }
+  ],
+  "aggregate": {
+    "greedy_efficiency": 0.953,
+    "moves_assessed": 476,
+    "clears_taken": 184,
+    "clears_available": 192,
+    "clear_conversion": 0.958,
+    "missed_clears": 8,
+    "invalid_kinds": {
+      "out_of_bounds_or_overlap": 6
+    },
+    "mean_final_fill": 0.512,
+    "mean_final_empty_regions": 4.7
+  }
+}

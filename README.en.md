@@ -11,7 +11,7 @@ A deterministic **Block Blast** (8×8 block puzzle) game environment and **LLM-a
 
 - **Zero dependencies** — the whole thing (env, harness, even the GIF encoder) runs on the Python standard library, Python 3.9+.
 - **Fully deterministic** — same seed ⇒ same piece sequence; every agent faces the identical deal, so results are fair and reproducible.
-- **Battle-tested** — 105 tests across four layers, including randomized invariant testing, hostile-input fuzzing and golden-pinned engine semantics; CI runs on Python 3.9 and 3.13.
+- **Battle-tested** — 107 tests across four layers, including randomized invariant testing, hostile-input fuzzing and golden-pinned engine semantics; CI runs on Python 3.9 and 3.13.
 
 ## Quick start
 
@@ -47,7 +47,9 @@ Live HTML report: **https://kittimzhe.github.io/blockblast-bench/**
 | 4 | greedy | 169.3 | 151.5 | 358 | 24.7 | 6.7 | 4 |
 | 5 | random | 56.9 | 55.5 | 94 | 13.3 | 0.9 | 1 |
 
-**LLM result** (qwen3.7-plus, same seeds): mean 286.9 / median 246 / **max 862** — already above `greedy`; the best game (87 moves, 37 lines, combo 7) exceeds the heuristic *mean*. Decision analysis: 0.954 single-step efficiency, 96% clear conversion. Six episodes were truncated by endpoint network faults (the harness counts partial scores and can `--resume` them).
+**LLM result** (qwen3.7-plus, same seeds, complete run): mean **416.8** / median 405 / **max 862** — comfortably above `greedy`; the best game (87 moves, 37 lines, combo 7) exceeds the heuristic *mean*. All 10 episodes reached a natural game over (`board_full` ×10, 100% completion). Decision analysis: 0.953 single-step efficiency, 96% clear conversion (184/192), 7895 tokens/move.
+
+> **Methodology finding**: this run was completed with `--resume` after endpoint faults truncated 6 episodes. Comparing the truncated snapshot (mean 286.9) with the complete run (mean 416.8): **the mean was depressed by 31% purely by infrastructure loss, while single-step efficiency (0.954 → 0.953) and clear conversion (96% → 96%) barely moved.** Process metrics are immune to truncation; outcome metrics are highly sensitive — so an eval report must publish its completion rate, otherwise "weak model" and "flaky endpoint" are indistinguishable.
 
 Where an agent lands on this ladder is directly interpretable: **below random ⇒ cannot even produce legal placements; above greedy ⇒ one-step payoff planning; near heuristic ⇒ board-shape management; near beam ⇒ planning across tray cycles.**
 
@@ -98,7 +100,7 @@ Finding of note: beam deliberately skips 26% of immediately available clears to 
 | Unit | piece catalog, scoring formula, placement/clear rules, text rendering |
 | Randomized invariants | hundreds of random games asserting cell conservation, cleared lines empty, combo/score accounting re-derivable, tray lifecycle, game-over ⇔ no legal action; **fuzzing** proves `step()` only ever raises `InvalidActionError` and never mutates state on rejection; **golden tests** pin fixed-seed outcomes |
 | Regression bands | baseline score bands + capability ladder (random < greedy < heuristic) |
-| End-to-end | all CLI subcommands, artifact schemas, resume, network fault injection (timeout/429/5xx/empty-200), pixel-level GIF decode verification |
+| End-to-end | all CLI subcommands, artifact schemas, resume + lineage (chains collapse to their final link), network fault injection (timeout/429/5xx/empty-200), pixel-level GIF decode verification |
 
 ## Artifacts
 

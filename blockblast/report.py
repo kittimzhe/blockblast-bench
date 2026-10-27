@@ -62,6 +62,7 @@ def write_run(run: RunResult, results_dir: Path, save_transcripts: bool = True) 
         "seeds": run.seeds,
         "scoring": run.scoring,
         "started_at": run.started_at,
+        "resumed_from": run.resumed_from,
         "aggregates": aggregates(run),
         "episodes_detail": [_episode_row(e) for e in run.results],
     }
@@ -100,6 +101,7 @@ def write_run(run: RunResult, results_dir: Path, save_transcripts: bool = True) 
         "episodes": run.episodes,
         "seed_base": run.seed_base,
         "started_at": run.started_at,
+        "resumed_from": run.resumed_from,
         "aggregates": summary["aggregates"],
     }
     results_dir = Path(results_dir)
@@ -111,7 +113,27 @@ def write_run(run: RunResult, results_dir: Path, save_transcripts: bool = True) 
     return run_dir
 
 
-def load_runs(results_dir: Path) -> List[Dict[str, Any]]:
+def collapse_resume_chains(runs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Keep only the final state of each resume chain.
+
+    ``resume_eval`` writes a brand-new run per attempt, so an interrupted
+    evaluation that needed three resume rounds leaves four rows describing
+    the *same* 10 games at different stages of completion. Comparing them
+    side by side on a leaderboard is meaningless (and flatters whichever
+    snapshot happened to finish more episodes), so a chain is represented
+    by its newest link only.
+
+    Runs without lineage metadata are always kept.
+    """
+    superseded = {
+        r["resumed_from"]
+        for r in runs
+        if isinstance(r, dict) and r.get("resumed_from")
+    }
+    return [r for r in runs if r.get("run_id") not in superseded]
+
+
+def load_runs(results_dir: Path, collapse_resumes: bool = False) -> List[Dict[str, Any]]:
     index = Path(results_dir) / RUNS_INDEX
     if not index.exists():
         return []
@@ -124,7 +146,7 @@ def load_runs(results_dir: Path) -> List[Dict[str, Any]]:
             rows.append(json.loads(line))
         except json.JSONDecodeError:
             continue
-    return rows
+    return collapse_resume_chains(rows) if collapse_resumes else rows
 
 
 def leaderboard_md(runs: List[Dict[str, Any]], title: str = "Block Blast Benchmark — Leaderboard") -> str:
@@ -172,7 +194,7 @@ def leaderboard_md(runs: List[Dict[str, Any]], title: str = "Block Blast Benchma
 
 def refresh_leaderboard(results_dir: Path) -> Optional[Path]:
     results_dir = Path(results_dir)
-    rows = load_runs(results_dir)
+    rows = load_runs(results_dir, collapse_resumes=True)
     if not rows:
         return None
     path = results_dir / LEADERBOARD
