@@ -38,7 +38,7 @@ python3 -m blockblast watch results/<run_id>/episodes/seed_2024.json --delay 0.1
 ```
 
 > macOS 系统 Python 对字节码缓存目录有权限限制时，在命令前加 `PYTHONDONTWRITEBYTECODE=1`。
-> 测试：`python3 -m pytest`（99 个用例，Python 3.9+；GIF 像素级校验需额外装 pillow）。
+> 测试：`python3 -m pytest`（105 个用例，Python 3.9+；GIF 像素级校验需额外装 pillow）。**English version: [README.en.md](README.en.md)**
 
 ## 测试策略
 
