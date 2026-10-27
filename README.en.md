@@ -53,7 +53,20 @@ Live HTML report: **https://kittimzhe.github.io/blockblast-bench/**
 
 Where an agent lands on this ladder is directly interpretable: **below random ⇒ cannot even produce legal placements; above greedy ⇒ one-step payoff planning; near heuristic ⇒ board-shape management; near beam ⇒ planning across tray cycles.**
 
-`beam` runs an exact lookahead within the current tray cycle (the tray refills only after all 3 pieces are used) — 6.7× the heuristic mean at width 80. Width sensitivity: more search lifts the ceiling dramatically (best game 1142 → **10140**, 1004 moves), but the mean enters a high-variance regime beyond width ≈20 — game scores are heavy-tailed, so max/median beat mean as peak-ability indicators on small samples.
+`beam` runs an exact lookahead within the current tray cycle (the tray refills only after all 3 pieces are used) — 6.7× the heuristic mean at width 80 on the 10-seed set.
+
+**Width sensitivity, and a lesson about sample size.** On the default 10 episodes the curve came out *non-monotonic* (width 20 below width 10), which looked like a genuine "high-variance regime". Re-running on **50 episodes** (seeds 2024-2073) makes it cleanly monotonic:
+
+| 50 eps | random | greedy | heuristic | beam-10 | beam-20 | beam-40 | beam-80 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| mean | 68.3 | 148.9 | 484.9 | 1469.6 | 1901.4 | 2329.3 | **2565.3** |
+| median | 57.5 | 122.0 | 411.5 | 1188.5 | 1234.5 | 1680.0 | **1767.5** |
+| **+/- s.e.m.** | 4.9 | 15.9 | 40.2 | 147.8 | 262.7 | 283.3 | **290.5** |
+| max | 174 | 523 | 1142 | 4719 | 8834 | **10740** | 10140 |
+
+The dip was pure sampling noise: beam-80's standard error is +/-290 at 50 episodes and roughly +/-650 at 10, easily swallowing a 400-point true gap. **Corrected conclusion: search budget improves scores monotonically, with diminishing marginal returns** (+432 from width 10->20, only +236 from 40->80). Note also that heuristic averages 484.9 here versus 586.9 on the 10-seed set - the default seeds are mildly "friendly", so scores are never comparable across seed sets.
+
+> Methodology: episode scores are heavy-tailed (one early move rewrites the game), so **always publish a standard error or sample size next to a mean** - on small samples, ranking gaps can be statistically meaningless. Reproduce with `python3 examples/baseline_study.py --episodes 50`.
 
 ## Game rules (faithful recreation)
 

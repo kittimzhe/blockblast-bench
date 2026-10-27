@@ -1,0 +1,86 @@
+{
+  "study": "baseline-ladder-50ep",
+  "episodes": 50,
+  "seed_base": 2024,
+  "seeds": "2024-2073",
+  "note": "Re-run of the beam width sensitivity on 50 episodes. The non-monotonic dip seen on the 10-episode seed set (width 20 below width 10) was sampling noise: the curve is monotonic here, with diminishing marginal returns. Reproduce with: python3 examples/baseline_study.py --episodes 50",
+  "rows": [
+    {
+      "agent": "random",
+      "episodes": 50,
+      "mean": 68.3,
+      "median": 57.5,
+      "stdev": 34.8,
+      "sem": 4.9,
+      "max": 174,
+      "mean_moves": 13.6,
+      "wall_s": 0.4
+    },
+    {
+      "agent": "greedy",
+      "episodes": 50,
+      "mean": 148.9,
+      "median": 122.0,
+      "stdev": 112.6,
+      "sem": 15.9,
+      "max": 523,
+      "mean_moves": 21.3,
+      "wall_s": 1.0
+    },
+    {
+      "agent": "heuristic",
+      "episodes": 50,
+      "mean": 484.9,
+      "median": 411.5,
+      "stdev": 284.0,
+      "sem": 40.2,
+      "max": 1142,
+      "mean_moves": 54.1,
+      "wall_s": 7.0
+    },
+    {
+      "agent": "beam-10",
+      "episodes": 50,
+      "mean": 1469.6,
+      "median": 1188.5,
+      "stdev": 1045.3,
+      "sem": 147.8,
+      "max": 4719,
+      "mean_moves": 146.6,
+      "wall_s": 130.0
+    },
+    {
+      "agent": "beam-20",
+      "episodes": 50,
+      "mean": 1901.4,
+      "median": 1234.5,
+      "stdev": 1857.7,
+      "sem": 262.7,
+      "max": 8834,
+      "mean_moves": 189.3,
+      "wall_s": 306.0
+    },
+    {
+      "agent": "beam-40",
+      "episodes": 50,
+      "mean": 2329.3,
+      "median": 1680.0,
+      "stdev": 2003.0,
+      "sem": 283.3,
+      "max": 10740,
+      "mean_moves": 229.0,
+      "wall_s": 661.0
+    },
+    {
+      "agent": "beam-80",
+      "episodes": 50,
+      "mean": 2565.3,
+      "median": 1767.5,
+      "stdev": 2054.2,
+      "sem": 290.5,
+      "max": 10140,
+      "mean_moves": 252.8,
+      "wall_s": 1205.0
+    }
+  ]
+}
