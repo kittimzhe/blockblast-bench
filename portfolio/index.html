@@ -125,7 +125,7 @@
 
   <div class="kpis">
     <div class="kpi"><b>0</b><span>第三方依赖<br>纯标准库</span></div>
-    <div class="kpi"><b>105</b><span>自动化测试<br>四层金字塔</span></div>
+    <div class="kpi"><b>107</b><span>自动化测试<br>四层金字塔</span></div>
     <div class="kpi"><b>6</b><span>Agent 梯度<br>random→beam→LLM</span></div>
     <div class="kpi"><b>10140</b><span>单局最高分<br>beam-80 · 1004 步</span></div>
     <div class="kpi"><b>2×CI</b><span>Python 3.9/3.13<br>全绿</span></div>
@@ -170,7 +170,7 @@
       <div class="tablebox" style="margin-top:1.6mm"><table>
         <tr><td style="text-align:left">代码规模</td><td>3435 行源码 + 1567 行测试（测试占比 31%）</td></tr>
         <tr><td style="text-align:left">运行环境</td><td>Python 3.9–3.13，零第三方依赖，克隆即跑</td></tr>
-        <tr><td style="text-align:left">评测规模</td><td>10 个入库 run，累计 <b>7875 步</b>真实对局数据</td></tr>
+        <tr><td style="text-align:left">评测规模</td><td>11 个入库 run，累计 <b>8351 步</b>真实对局数据</td></tr>
         <tr><td style="text-align:left">开源状态</td><td>MIT · CI 双版本全绿 · Pages 在线报告 · 打包就绪</td></tr>
       </table></div>
     </div>
@@ -254,20 +254,20 @@
       <div class="ladder">
         <div class="lrow"><div class="name">random</div><div class="bar" style="width:4%"></div><div class="val">57</div></div>
         <div class="lrow"><div class="name">greedy（单步最优）</div><div class="bar" style="width:7%"></div><div class="val">169</div></div>
-        <div class="lrow"><div class="name muted">qwen3.7-plus（LLM）</div><div class="bar llm" style="width:11%"></div><div class="val llm">287</div></div>
+        <div class="lrow"><div class="name muted">qwen3.7-plus（LLM）</div><div class="bar llm" style="width:14%"></div><div class="val llm">417</div></div>
         <div class="lrow"><div class="name">heuristic（形状管理）</div><div class="bar" style="width:17%"></div><div class="val">587</div></div>
         <div class="lrow"><div class="name">beam-40（周期前瞻）</div><div class="bar" style="width:54%"></div><div class="val">2031</div></div>
         <div class="lrow"><div class="name">beam-80</div><div class="bar" style="width:100%"></div><div class="val">3953</div></div>
       </div>
-      <p class="small">阶梯本身就是解读器：<b>超过 greedy ⇒ 有一步收益规划；逼近 heuristic ⇒ 有板面管理；逼近 beam ⇒ 具备跨托盘周期的长程规划</b>。qwen 均分 287 居 greedy 与 heuristic 之间，但其最佳单局 862 已超 heuristic 均值。</p>
+      <p class="small">阶梯本身就是解读器：<b>超过 greedy ⇒ 有一步收益规划；逼近 heuristic ⇒ 有板面管理；逼近 beam ⇒ 具备跨托盘周期的长程规划</b>。qwen 均分 417 居 greedy 与 heuristic 之间（10 局全部自然终局），最佳单局 862 已超 heuristic 均值。</p>
     </div>
     <figure><img src="assets/report-leaderboard.png" alt="排行榜" style="image-rendering:auto"><figcaption>在线 HTML 报告的实时排行榜（GitHub Pages 自动部署），每行可溯源至完整对局转录</figcaption></figure>
   </div>
 
   <h2><span class="no">5</span>三个研究发现</h2>
   <div class="findings sect">
-    <div class="find"><h4><span class="num">0.954</span>｜LLM 低分是截断假象</h4>
-      <p>决策分析显示 qwen 单步效率 0.954、消行把握 96%——<b>不是不会玩，而是平台截断压低了均分</b>。最佳完整局 862 分（37 消行 · combo×7）即为能力证据。评测结论必须区分「能力不足」与「基础设施损耗」。</p></div>
+    <div class="find"><h4><span class="num">+45%</span>｜过程指标免疫截断，结果指标不免疫</h4>
+      <p>平台故障截断 6 局后用 <code>--resume</code> 补完，得到同种子对照：<b>均分 286.9 → 416.8（+45%）</b>，而<b>单步效率 0.954 → 0.953、消行把握 96% → 96% 几乎不动</b>。证明基础设施损耗只污染结果类指标——<b>评测报告必须公布完整终局率</b>，否则「模型弱」与「端点抖」无法区分。</p></div>
     <div class="find"><h4><span class="num">99→74→72%</span>｜消行把握率度量「远见」</h4>
       <p>搜索预算越大，Agent 越敢<b>放弃即时消行</b>去凑周期内更大的连消（heuristic 99% → beam-40 74% → beam-80 72%），死局碎片化同步从 3.5 降到 1.4 个空区。「延迟满足」首次成为可测量的行为谱系。</p></div>
     <div class="find"><h4><span class="num">重尾</span>｜max/median 优于 mean</h4>
@@ -291,7 +291,7 @@
 
 <!-- ================= PAGE 4 : 工程质量与交付 ================= -->
 <div class="page">
-  <h2><span class="no">6</span>工程质量：四层测试金字塔（105 用例，CI 双版本全绿）</h2>
+  <h2><span class="no">6</span>工程质量：四层测试金字塔（107 用例，CI 双版本全绿）</h2>
   <div class="twocol sect">
     <div>
       <div class="pyr">
@@ -339,7 +339,7 @@
       <ul class="compact small">
         <li>游戏机制逆向与确定性环境设计、全部 Agent 与评测 harness 实现；</li>
         <li>真实平台 15+ 小时评测运维：三类网络故障的诊断、加固与回归测试；</li>
-        <li>测试体系（105 用例）、CI、开源发布、文档与在线报告全链路。</li>
+        <li>测试体系（107 用例）、CI、开源发布、文档与在线报告全链路。</li>
       </ul>
     </div>
     <div class="panel">
