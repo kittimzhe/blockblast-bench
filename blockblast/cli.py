@@ -140,6 +140,10 @@ def cmd_run(args) -> int:
         kwargs = {}
         if args.agent in ("greedy", "heuristic"):
             kwargs["scoring"] = cfg.scoring
+        if args.agent == "beam":
+            kwargs["scoring"] = cfg.scoring
+            if getattr(args, "beam_width", None):
+                kwargs["beam_width"] = args.beam_width
 
         def factory():
             return make_agent(args.agent, **kwargs)
@@ -328,6 +332,7 @@ def cmd_watch(args) -> int:
 def _add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--max-moves", type=int, default=3000, help="safety cap on moves per episode")
     p.add_argument("--invalid-retries", type=int, default=2, help="retries after an illegal/unparseable move")
+    p.add_argument("--beam-width", type=int, default=40, help="beam width for the beam agent")
 
 
 def _add_llm(p: argparse.ArgumentParser) -> None:

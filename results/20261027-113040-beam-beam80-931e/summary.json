@@ -1,0 +1,202 @@
+{
+  "run_id": "20261027-113040-beam-beam80-931e",
+  "agent": "beam",
+  "model": null,
+  "episodes": 10,
+  "seed_base": 2024,
+  "seeds": [
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033
+  ],
+  "scoring": {
+    "points_per_cell": 1,
+    "points_per_line": 10,
+    "multi_line_progressive": true,
+    "combo_step": 0.5,
+    "combo_cap": 4.0,
+    "perfect_clear_bonus": 300
+  },
+  "started_at": "2026-10-27T11:30:40",
+  "aggregates": {
+    "episodes": 10,
+    "mean_score": 3953.2,
+    "median_score": 4014.5,
+    "max_score": 10140,
+    "min_score": 949,
+    "stdev_score": 2553.5,
+    "mean_moves": 384.8,
+    "total_moves": 3848,
+    "mean_lines": 186,
+    "total_lines": 1860,
+    "best_combo": 4,
+    "perfect_clears": 0,
+    "invalid_total": 0,
+    "invalid_per_move": 0.0,
+    "valid_completion_rate": 1.0,
+    "tokens_per_move": 0.0,
+    "reasons": {
+      "board_full": 10
+    },
+    "mean_duration_s": 29.54
+  },
+  "episodes_detail": [
+    {
+      "seed": 2024,
+      "score": 4446,
+      "moves": 421,
+      "lines_cleared": 209,
+      "max_combo": 4,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 27.293,
+      "agent_stats": {
+        "moves": 421
+      },
+      "error": ""
+    },
+    {
+      "seed": 2025,
+      "score": 949,
+      "moves": 95,
+      "lines_cleared": 44,
+      "max_combo": 4,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 8.709,
+      "agent_stats": {
+        "moves": 95
+      },
+      "error": ""
+    },
+    {
+      "seed": 2026,
+      "score": 1163,
+      "moves": 110,
+      "lines_cleared": 54,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 7.034,
+      "agent_stats": {
+        "moves": 110
+      },
+      "error": ""
+    },
+    {
+      "seed": 2027,
+      "score": 2682,
+      "moves": 266,
+      "lines_cleared": 127,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 20.977,
+      "agent_stats": {
+        "moves": 266
+      },
+      "error": ""
+    },
+    {
+      "seed": 2028,
+      "score": 10140,
+      "moves": 1004,
+      "lines_cleared": 479,
+      "max_combo": 4,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 80.267,
+      "agent_stats": {
+        "moves": 1004
+      },
+      "error": ""
+    },
+    {
+      "seed": 2029,
+      "score": 1771,
+      "moves": 169,
+      "lines_cleared": 83,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 10.983,
+      "agent_stats": {
+        "moves": 169
+      },
+      "error": ""
+    },
+    {
+      "seed": 2030,
+      "score": 4339,
+      "moves": 419,
+      "lines_cleared": 204,
+      "max_combo": 4,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 29.555,
+      "agent_stats": {
+        "moves": 419
+      },
+      "error": ""
+    },
+    {
+      "seed": 2031,
+      "score": 3690,
+      "moves": 347,
+      "lines_cleared": 170,
+      "max_combo": 4,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 32.445,
+      "agent_stats": {
+        "moves": 347
+      },
+      "error": ""
+    },
+    {
+      "seed": 2032,
+      "score": 4797,
+      "moves": 458,
+      "lines_cleared": 224,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 35.97,
+      "agent_stats": {
+        "moves": 458
+      },
+      "error": ""
+    },
+    {
+      "seed": 2033,
+      "score": 5555,
+      "moves": 559,
+      "lines_cleared": 266,
+      "max_combo": 4,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 42.177,
+      "agent_stats": {
+        "moves": 559
+      },
+      "error": ""
+    }
+  ]
+}

@@ -41,16 +41,17 @@ Live HTML report: **https://kittimzhe.github.io/blockblast-bench/**
 
 | # | Agent | Mean | Median | Max | Moves | Lines | Combo |
 |---:|---|---:|---:|---:|---:|---:|---:|
-| 1 | beam (width 40) | 2031.2 | 1627.0 | 6141 | 200.0 | 94.5 | 4 |
-| 2 | heuristic | 586.9 | 513.0 | 1142 | 64.0 | 26.9 | 4 |
-| 3 | greedy | 169.3 | 151.5 | 358 | 24.7 | 6.7 | 4 |
-| 4 | random | 56.9 | 55.5 | 94 | 13.3 | 0.9 | 1 |
+| 1 | beam (width 80) | 3953.2 | 4014.5 | **10140** | 384.8 | 186.0 | 4 |
+| 2 | beam (width 40) | 2031.2 | 1627.0 | 6141 | 200.0 | 94.5 | 4 |
+| 3 | heuristic | 586.9 | 513.0 | 1142 | 64.0 | 26.9 | 4 |
+| 4 | greedy | 169.3 | 151.5 | 358 | 24.7 | 6.7 | 4 |
+| 5 | random | 56.9 | 55.5 | 94 | 13.3 | 0.9 | 1 |
 
 **LLM result** (qwen3.7-plus, same seeds): mean 286.9 / median 246 / **max 862** — already above `greedy`; the best game (87 moves, 37 lines, combo 7) exceeds the heuristic *mean*. Decision analysis: 0.954 single-step efficiency, 96% clear conversion. Six episodes were truncated by endpoint network faults (the harness counts partial scores and can `--resume` them).
 
 Where an agent lands on this ladder is directly interpretable: **below random ⇒ cannot even produce legal placements; above greedy ⇒ one-step payoff planning; near heuristic ⇒ board-shape management; near beam ⇒ planning across tray cycles.**
 
-`beam` runs an exact lookahead within the current tray cycle (the tray refills only after all 3 pieces are used) — 3.5× the heuristic mean. Width sensitivity: more search lifts the ceiling dramatically (best game 1142 → **10140** at width 80), but the mean enters a high-variance regime beyond width ≈20 — game scores are heavy-tailed, so max/median beat mean as peak-ability indicators on small samples.
+`beam` runs an exact lookahead within the current tray cycle (the tray refills only after all 3 pieces are used) — 6.7× the heuristic mean at width 80. Width sensitivity: more search lifts the ceiling dramatically (best game 1142 → **10140**, 1004 moves), but the mean enters a high-variance regime beyond width ≈20 — game scores are heavy-tailed, so max/median beat mean as peak-ability indicators on small samples.
 
 ## Game rules (faithful recreation)
 
