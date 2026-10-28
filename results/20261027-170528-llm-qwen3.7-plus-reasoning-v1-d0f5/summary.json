@@ -1,0 +1,264 @@
+{
+  "run_id": "20261027-170528-llm-qwen3.7-plus-reasoning-v1-d0f5",
+  "agent": "llm",
+  "model": "qwen3.7-plus",
+  "episodes": 10,
+  "seed_base": 2024,
+  "seeds": [
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033
+  ],
+  "scoring": {
+    "points_per_cell": 1,
+    "points_per_line": 10,
+    "multi_line_progressive": true,
+    "combo_step": 0.5,
+    "combo_cap": 4.0,
+    "perfect_clear_bonus": 300
+  },
+  "started_at": "2026-10-27T17:05:28",
+  "resumed_from": null,
+  "aggregates": {
+    "episodes": 10,
+    "mean_score": 446.2,
+    "median_score": 346.0,
+    "max_score": 885,
+    "min_score": 211,
+    "stdev_score": 214.4,
+    "mean_moves": 52,
+    "total_moves": 520,
+    "mean_lines": 21.2,
+    "total_lines": 212,
+    "best_combo": 4,
+    "perfect_clears": 0,
+    "invalid_total": 1,
+    "invalid_per_move": 0.0019,
+    "valid_completion_rate": 0.9,
+    "tokens_per_move": 11813.8,
+    "reasons": {
+      "board_full": 9,
+      "agent_error": 1
+    },
+    "mean_duration_s": 14149.49
+  },
+  "episodes_detail": [
+    {
+      "seed": 2024,
+      "score": 301,
+      "moves": 35,
+      "lines_cleared": 14,
+      "max_combo": 2,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 8724.345,
+      "agent_stats": {
+        "requests": 35,
+        "network_errors": 7,
+        "parse_errors": 0,
+        "prompt_tokens": 20378,
+        "completion_tokens": 391948,
+        "total_tokens": 412326,
+        "latency_s": 6307.720358046
+      },
+      "error": ""
+    },
+    {
+      "seed": 2025,
+      "score": 754,
+      "moves": 84,
+      "lines_cleared": 37,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 1,
+      "reason": "agent_error",
+      "duration_s": 22704.936,
+      "agent_stats": {
+        "requests": 85,
+        "network_errors": 30,
+        "parse_errors": 0,
+        "prompt_tokens": 49476,
+        "completion_tokens": 926836,
+        "total_tokens": 976312,
+        "latency_s": 14938.675847961997
+      },
+      "error": "network failure after 8 attempts: <urlopen error [Errno 8] nodename nor servname provided, or not known>"
+    },
+    {
+      "seed": 2026,
+      "score": 324,
+      "moves": 35,
+      "lines_cleared": 15,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 10010.132,
+      "agent_stats": {
+        "requests": 35,
+        "network_errors": 9,
+        "parse_errors": 0,
+        "prompt_tokens": 20413,
+        "completion_tokens": 395664,
+        "total_tokens": 416077,
+        "latency_s": 6381.243915707997
+      },
+      "error": ""
+    },
+    {
+      "seed": 2027,
+      "score": 461,
+      "moves": 53,
+      "lines_cleared": 22,
+      "max_combo": 2,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 13157.727,
+      "agent_stats": {
+        "requests": 53,
+        "network_errors": 14,
+        "parse_errors": 0,
+        "prompt_tokens": 30844,
+        "completion_tokens": 553336,
+        "total_tokens": 584180,
+        "latency_s": 8928.451168919002
+      },
+      "error": ""
+    },
+    {
+      "seed": 2028,
+      "score": 885,
+      "moves": 101,
+      "lines_cleared": 43,
+      "max_combo": 4,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 32011.231,
+      "agent_stats": {
+        "requests": 101,
+        "network_errors": 42,
+        "parse_errors": 0,
+        "prompt_tokens": 58793,
+        "completion_tokens": 1251727,
+        "total_tokens": 1310520,
+        "latency_s": 20092.344668701968
+      },
+      "error": ""
+    },
+    {
+      "seed": 2029,
+      "score": 368,
+      "moves": 44,
+      "lines_cleared": 17,
+      "max_combo": 2,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 11137.677,
+      "agent_stats": {
+        "requests": 44,
+        "network_errors": 16,
+        "parse_errors": 0,
+        "prompt_tokens": 25672,
+        "completion_tokens": 519425,
+        "total_tokens": 545097,
+        "latency_s": 8358.645079254005
+      },
+      "error": ""
+    },
+    {
+      "seed": 2030,
+      "score": 294,
+      "moves": 37,
+      "lines_cleared": 13,
+      "max_combo": 2,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 12156.482,
+      "agent_stats": {
+        "requests": 37,
+        "network_errors": 16,
+        "parse_errors": 0,
+        "prompt_tokens": 21534,
+        "completion_tokens": 418974,
+        "total_tokens": 440508,
+        "latency_s": 6758.839944042007
+      },
+      "error": ""
+    },
+    {
+      "seed": 2031,
+      "score": 211,
+      "moves": 29,
+      "lines_cleared": 9,
+      "max_combo": 2,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 6406.707,
+      "agent_stats": {
+        "requests": 29,
+        "network_errors": 5,
+        "parse_errors": 0,
+        "prompt_tokens": 16860,
+        "completion_tokens": 304040,
+        "total_tokens": 320900,
+        "latency_s": 4896.184221169977
+      },
+      "error": ""
+    },
+    {
+      "seed": 2032,
+      "score": 592,
+      "moves": 70,
+      "lines_cleared": 29,
+      "max_combo": 3,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 18148.881,
+      "agent_stats": {
+        "requests": 70,
+        "network_errors": 17,
+        "parse_errors": 0,
+        "prompt_tokens": 40673,
+        "completion_tokens": 771704,
+        "total_tokens": 812377,
+        "latency_s": 12405.189986668993
+      },
+      "error": ""
+    },
+    {
+      "seed": 2033,
+      "score": 272,
+      "moves": 32,
+      "lines_cleared": 13,
+      "max_combo": 2,
+      "perfect_clears": 0,
+      "invalid_actions": 0,
+      "reason": "board_full",
+      "duration_s": 7036.744,
+      "agent_stats": {
+        "requests": 32,
+        "network_errors": 6,
+        "parse_errors": 0,
+        "prompt_tokens": 18626,
+        "completion_tokens": 306265,
+        "total_tokens": 324891,
+        "latency_s": 4922.154249624
+      },
+      "error": ""
+    }
+  ]
+}

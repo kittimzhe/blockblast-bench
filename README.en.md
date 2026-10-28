@@ -68,6 +68,38 @@ The dip was pure sampling noise: beam-80's standard error is +/-290 at 50 episod
 
 > Methodology: episode scores are heavy-tailed (one early move rewrites the game), so **always publish a standard error or sample size next to a mean** - on small samples, ranking gaps can be statistically meaningless. Reproduce with `python3 examples/baseline_study.py --episodes 50`.
 
+### Controlled experiment: does "think before you place" help?
+
+`--allow-reasoning` lets the model reason freely before emitting its JSON action (the default prompt asks for the action directly). **The prompt is the only variable** - same model, same seeds.
+
+| | direct JSON | reasoning | |
+|---|---:|---:|---|
+| mean | 416.8 | **446.2** | +7% |
+| median | **405.0** | 346.0 | -15% |
+| completion rate | **100%** | 90% | 1 episode timed out |
+| **invalid rate** | 0.0126 | **0.0019** | **6.6x lower** |
+| tokens/move | **7895** | 11814 | **1.50x cost** |
+
+Because the environment is deterministic both runs played *the exact same 10 games*, so each seed forms a matched pair and the per-seed difference cancels the huge seed-to-seed variance:
+
+```
+clean pairs       : 9 (reasoning wins 5, loses 4)
+mean paired delta : +44.7  (median +75.0)
+95% bootstrap CI  : [-90, +181]  -> includes zero
+exact sign test   : p = 1.000
+```
+
+**Conclusion: reasoning buys no detectable score improvement.** The +7% mean sits entirely inside the noise - the paired 95% CI straddles zero and the sign test returns p = 1.0 (5-4, indistinguishable from a coin flip). Quoting "+29.4 points" as a win would be a textbook small-sample misreading; the median actually *drops*.
+
+**One effect does point clearly in one direction**: invalid placements fall from 0.0126 to 0.0019 (**6.6x**, Fisher exact p = 0.059). Reasoning space appears to improve *instruction following and spatial self-checking* rather than strategic depth - at 1.5x the token cost plus one timeout (the longest single game ran 8.9 hours).
+
+Stated honestly: p = 0.059 is only *near* significance and n=9 cannot settle it; confirming this needs a larger sample or more models. Reproduce with:
+
+```bash
+python3 examples/compare_runs.py results/<direct-run> results/<reasoning-run> \
+    --label-a direct --label-b reasoning
+```
+
 ## Game rules (faithful recreation)
 
 - 8×8 board; a tray of 3 pieces that refills only when all are used; **no rotations/flips**.
