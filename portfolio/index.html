@@ -88,7 +88,7 @@
   .lrow .val.llm { color:var(--warn); }
 
   /* ---------- findings ---------- */
-  .findings { display:grid; grid-template-columns:repeat(3,1fr); gap:4mm; margin-top:3mm; }
+  .findings { display:grid; grid-template-columns:repeat(3,1fr); gap:3.2mm; margin-top:3mm; }
   .find { border-top:3px solid var(--accent); background:var(--bg); border-radius:0 0 9px 9px; padding:3mm 3.4mm; }
   .find h4 { font-size:9.5pt; margin-bottom:1.4mm; }
   .find p { font-size:8.3pt; color:#3a4254; margin:0; }
@@ -260,29 +260,31 @@
         <div class="lrow"><div class="name">beam-80</div><div class="bar" style="width:100%"></div><div class="val">3953</div></div>
       </div>
       <p class="small">阶梯本身就是解读器：<b>超过 greedy ⇒ 有一步收益规划；逼近 heuristic ⇒ 有板面管理；逼近 beam ⇒ 具备跨托盘周期的长程规划</b>。qwen 均分 417 居 greedy 与 heuristic 之间（10 局全部自然终局），最佳单局 862 已超 heuristic 均值。</p>
+      <p class="tiny muted">▲ 默认 10 局种子集（2024–2033）。另有 50 局大样本研究（见发现 #3）显示该种子集偏「友好」，<b>跨种子集分数不可直接比较</b>——排行榜因此始终标注种子集与配置。</p>
     </div>
     <figure><img src="assets/report-leaderboard.png" alt="排行榜" style="image-rendering:auto"><figcaption>在线 HTML 报告的实时排行榜（GitHub Pages 自动部署），每行可溯源至完整对局转录</figcaption></figure>
   </div>
 
   <h2><span class="no">5</span>三个研究发现</h2>
   <div class="findings sect">
-    <div class="find"><h4><span class="num">+45%</span>｜过程指标免疫截断，结果指标不免疫</h4>
-      <p>平台故障截断 6 局后用 <code>--resume</code> 补完，得到同种子对照：<b>均分 286.9 → 416.8（+45%）</b>，而<b>单步效率 0.954 → 0.953、消行把握 96% → 96% 几乎不动</b>。证明基础设施损耗只污染结果类指标——<b>评测报告必须公布完整终局率</b>，否则「模型弱」与「端点抖」无法区分。</p></div>
-    <div class="find"><h4><span class="num">99→74→72%</span>｜消行把握率度量「远见」</h4>
-      <p>搜索预算越大，Agent 越敢<b>放弃即时消行</b>去凑周期内更大的连消（heuristic 99% → beam-40 74% → beam-80 72%），死局碎片化同步从 3.5 降到 1.4 个空区。「延迟满足」首次成为可测量的行为谱系。</p></div>
-    <div class="find"><h4><span class="num">重尾</span>｜max/median 优于 mean</h4>
-      <p>单局分数呈重尾分布——一步之差改写整局（蝴蝶效应）。宽度敏感性实验中宽度 20 均分反而低于 10。小样本下 <b>max 与中位数比均值更能反映峰值能力</b>，该结论直接适用于 LLM 评测的指标选型。</p></div>
+    <div class="find"><h4><span class="num">p=1.00</span>｜「先推理再落子」不提升分数</h4>
+      <p>项目立项要回答的问题。<code>--allow-reasoning</code> 同模型同种子对照：均分 416.8 → 446.2 看似 +7%，但因环境确定性可做<b>配对检验</b>——9 组有效配对 <b>5 胜 4 负、95% 置信区间 [−90, +181] 跨零、符号检验 p=1.00</b>。<b>+7% 完全是噪声</b>，median 反而降 15%。只报均值就会误判。</p></div>
+    <div class="find"><h4><span class="num">6.6×</span>｜推理改善的是「自检」而非「策略」</h4>
+      <p>同一实验中唯一方向明确的效应：<b>非法落子率 0.0126 → 0.0019（6.6 倍，Fisher p=0.059）</b>。即推理空间提升的是<b>指令遵循与空间约束自检</b>，不是策略深度。代价为 1.5× token。诚实标注：p=0.059 仅<i>接近</i>显著，n=9 不足以定论。</p></div>
+    <div class="find"><h4><span class="num">自我推翻</span>｜小样本让我写错过结论</h4>
+      <p>曾基于 10 局数据发布「宽度 ≥20 进入高方差区」。<b>50 局重跑后曲线是干净单调的</b>（1470→1901→2329→2565），凹陷纯属抽样噪声——beam-80 标准误 n=10 时约 ±650，足以淹没 400 分真实差距。已公开修正并固化为可复现脚本。</p></div>
   </div>
 
   <div class="twocol">
     <div>
-      <h3>beam 宽度敏感性（10 局/档，一次性实验）</h3>
+      <h3>beam 宽度敏感性（50 局/档，带标准误）</h3>
       <div class="tablebox"><table>
-        <tr><th>宽度</th><th>1</th><th>5</th><th>10</th><th>20</th><th>40</th><th>80</th><th>160</th></tr>
-        <tr><td>mean</td><td>473</td><td>1336</td><td>1945</td><td>1448</td><td>2031</td><td><b>3953</b></td><td>2537</td></tr>
-        <tr><td>max</td><td>1142</td><td>4567</td><td>4719</td><td>6366</td><td>6141</td><td><b>10140</b></td><td>5900</td></tr>
+        <tr><th>宽度</th><th>10</th><th>20</th><th>40</th><th>80</th></tr>
+        <tr><td>mean</td><td>1470</td><td>1901</td><td>2329</td><td><b>2565</b></td></tr>
+        <tr><td>± s.e.m.</td><td>148</td><td>263</td><td>283</td><td>291</td></tr>
+        <tr><td>max</td><td>4719</td><td>8834</td><td><b>10740</b></td><td>10140</td></tr>
       </table></div>
-      <p class="tiny muted" style="margin-top:1.6mm">搜索预算显著抬升上限（1.1k→10k+），但宽度 ≥20 后均值进入高方差区——与「重尾」发现互为印证。</p>
+      <p class="tiny muted" style="margin-top:1.4mm">单调递增、边际收益递减：10→20 增 432 分，40→80 仅增 236 分。小样本（10 局）曾在此出现虚假凹陷。</p>
     </div>
     <figure><img src="assets/report-card.png" alt="beam-80 KPI 卡片" style="image-rendering:auto"><figcaption>beam-80 的 run 画像卡片：KPI + 逐局得分 SVG 图表（纯内联 SVG，零 JS），万分局一目了然</figcaption></figure>
   </div>
@@ -291,6 +293,11 @@
 
 <!-- ================= PAGE 4 : 工程质量与交付 ================= -->
 <div class="page">
+  <div class="panel sect">
+    <h3>发现 #4：过程指标免疫截断，结果指标不免疫</h3>
+    <p class="small">平台故障截断 6 局后用 <code>--resume</code> 补完，得到同种子对照：<b>均分 286.9 → 416.8（+45%）</b>，而<b>单步效率 0.954 → 0.953、消行把握 96% → 96% 几乎不动</b>。基础设施损耗只污染结果类指标——因此<b>评测报告必须公布完整终局率</b>，否则「模型能力弱」与「端点不稳」在数据上无法区分。这条发现也直接驱动了下方的续跑血缘设计。</p>
+  </div>
+
   <h2><span class="no">6</span>工程质量：四层测试金字塔（107 用例，CI 双版本全绿）</h2>
   <div class="twocol sect">
     <div>
