@@ -11,6 +11,7 @@ import struct
 from typing import List, Sequence, Tuple
 
 MAX_CODE = 4095  # 12-bit LZW ceiling
+MAX_DELAY_CS = 0xFFFF  # GIF stores the frame delay in one 16-bit field
 
 
 class _BitPacker:
@@ -102,6 +103,8 @@ def write_gif(
 
     ``frames`` are palette-index buffers of length width*height;
     ``delays_cs`` are per-frame delays in 1/100 s; ``loop=0`` = forever.
+    Delays are clamped into the 1..65535 range that GIF's 16-bit field can
+    represent, so an extreme ``--speed`` cannot surface as a struct error.
     """
     width, height = size
     if not frames:
@@ -133,7 +136,7 @@ def write_gif(
             raise ValueError("palette index out of range")
         # graphic control: disposal=1 (leave frame in place), no transparency
         out.extend(b"\x21\xf9\x04\x04")
-        out.extend(struct.pack("<H", max(1, int(delay))))
+        out.extend(struct.pack("<H", min(MAX_DELAY_CS, max(1, int(delay)))))
         out.extend(b"\x00\x00")
         # image descriptor: full-frame, no local colour table
         out.extend(b"\x2c")

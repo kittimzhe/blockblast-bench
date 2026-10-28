@@ -100,3 +100,39 @@ def test_gif_cli_roundtrip(tmp_path):
     assert out_gif.exists()
     img = PIL.open(out_gif)
     assert getattr(img, "n_frames", 1) > 10
+
+
+def test_extreme_delay_is_clamped_not_crashing(tmp_path):
+    """GIF stores delays in 16 bits; overflow must clamp, not raise struct.error."""
+    from blockblast.gifenc import MAX_DELAY_CS, write_gif
+
+    out = tmp_path / "slow.gif"
+    # a delay far beyond the 16-bit field, plus a zero/negative one
+    write_gif(out, (2, 2), [(0, 0, 0), (255, 255, 255)],
+              [[0, 1, 1, 0], [1, 0, 0, 1], [0, 0, 1, 1]],
+              [999_999, 0, -5])
+    assert out.stat().st_size > 0
+
+    raw = out.read_bytes()
+    assert raw.startswith(b"GIF89a")
+    # every graphic-control extension must carry a representable delay
+    assert MAX_DELAY_CS == 0xFFFF
+    with PIL.open(out) as im:  # decoded delays must stay representable
+        delays = []
+        for frame in range(im.n_frames):
+            im.seek(frame)
+            delays.append(im.info.get("duration", 0))
+        assert all(0 <= d <= MAX_DELAY_CS * 10 for d in delays)
+
+
+def test_gif_cli_rejects_absurd_speed(tmp_path, capsys):
+    """--speed 0.0001 used to surface a raw struct.error from the encoder."""
+    from blockblast.cli import main
+
+    ep = tmp_path / "ep.json"
+    ep.write_text(json.dumps({
+        "agent": "greedy", "seed": 1, "score": 0, "transcript": [],
+    }), encoding="utf-8")
+
+    assert main(["gif", str(ep), "-o", str(tmp_path / "x.gif"), "--speed", "0.0001"]) == 2
+    assert "--speed must be between" in capsys.readouterr().err

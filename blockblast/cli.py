@@ -253,6 +253,12 @@ def cmd_gif(args) -> int:
     if not path.exists():
         print(f"error: no such file: {path}", file=sys.stderr)
         return 2
+    if not 0.01 <= args.speed <= 100:
+        print(
+            f"error: --speed must be between 0.01 and 100 (got {args.speed})",
+            file=sys.stderr,
+        )
+        return 2
     data, transcript = _load_transcript(path)
     out = Path(args.out) if args.out else path.with_suffix(".gif")
     n_frames, (w, h) = transcript_to_gif(out, transcript, speed=args.speed)
