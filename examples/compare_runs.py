@@ -36,6 +36,31 @@ def load(run_dir: Path) -> Tuple[Dict[int, dict], dict]:
     return {r["seed"]: r for r in summary["episodes_detail"]}, summary["aggregates"]
 
 
+def load_many(run_dirs: List[Path]) -> Tuple[Dict[int, dict], dict]:
+    """Merge several runs of the SAME condition into one seed->episode map.
+
+    Lets a condition be assembled from multiple runs (e.g. an original
+    10-seed run plus a later 20-seed extension) so the paired sample can
+    grow without re-paying for episodes already played. A seed appearing
+    twice keeps the finished copy, preferring the later run.
+    """
+    merged: Dict[int, dict] = {}
+    weighted: Dict[str, float] = {}
+    total_eps = 0
+    for d in run_dirs:
+        rows, agg = load(d)
+        for seed, row in rows.items():
+            prev = merged.get(seed)
+            if prev is None or (prev["reason"] not in FINISHED and row["reason"] in FINISHED):
+                merged[seed] = row
+        n = len(rows)
+        total_eps += n
+        for key in ("tokens_per_move", "valid_completion_rate"):
+            weighted[key] = weighted.get(key, 0.0) + agg.get(key, 0) * n
+    agg_out = {k: v / total_eps for k, v in weighted.items()} if total_eps else {}
+    return merged, agg_out
+
+
 def bootstrap_ci(diffs: List[float], iters: int = 20000, seed: int = 7) -> Tuple[float, float]:
     random.seed(seed)
     means = sorted(statistics.mean(random.choices(diffs, k=len(diffs))) for _ in range(iters))
@@ -69,14 +94,16 @@ def fisher_exact(a: int, b: int, c: int, d: int) -> float:
 
 def main(argv: List[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("run_a", type=Path, help="baseline run directory")
-    ap.add_argument("run_b", type=Path, help="variant run directory")
+    ap.add_argument("--a", type=Path, nargs="+", required=True,
+                    metavar="RUN", help="baseline run directory/ies (merged)")
+    ap.add_argument("--b", type=Path, nargs="+", required=True,
+                    metavar="RUN", help="variant run directory/ies (merged)")
     ap.add_argument("--label-a", default="A")
     ap.add_argument("--label-b", default="B")
     args = ap.parse_args(argv)
 
-    a_rows, a_agg = load(args.run_a)
-    b_rows, b_agg = load(args.run_b)
+    a_rows, a_agg = load_many(args.a)
+    b_rows, b_agg = load_many(args.b)
     seeds = sorted(set(a_rows) & set(b_rows))
     if not seeds:
         print("error: runs share no seeds — not comparable")

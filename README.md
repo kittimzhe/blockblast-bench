@@ -129,7 +129,9 @@ exact sign test   : p = 1.000
 诚实标注：p = 0.059 只是**接近**显著，n=9 的样本不足以定论；这个方向需要更大样本或更多模型来确证。复现命令：
 
 ```bash
-python3 examples/compare_runs.py results/<direct-run> results/<reasoning-run> \
+python3 examples/compare_runs.py \
+    --a results/<direct-run> [more-direct-runs...] \
+    --b results/<reasoning-run> [more-reasoning-runs...] \
     --label-a direct --label-b reasoning
 ```
 

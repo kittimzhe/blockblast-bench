@@ -96,7 +96,9 @@ exact sign test   : p = 1.000
 Stated honestly: p = 0.059 is only *near* significance and n=9 cannot settle it; confirming this needs a larger sample or more models. Reproduce with:
 
 ```bash
-python3 examples/compare_runs.py results/<direct-run> results/<reasoning-run> \
+python3 examples/compare_runs.py \
+    --a results/<direct-run> [more-direct-runs...] \
+    --b results/<reasoning-run> [more-reasoning-runs...] \
     --label-a direct --label-b reasoning
 ```
 
