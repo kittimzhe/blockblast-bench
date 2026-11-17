@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import statistics
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
@@ -216,8 +216,15 @@ def run_eval(
     cfg: EvalConfig,
     agent_name: str,
     model: Optional[str] = None,
+    on_episode: Optional[Callable[[int, int, "EpisodeResult"], None]] = None,
 ) -> RunResult:
-    """Run ``cfg.episodes`` episodes (one fresh agent instance each)."""
+    """Run ``cfg.episodes`` episodes (one fresh agent instance each).
+
+    ``on_episode(done, total, result)`` fires as each episode finishes, so a
+    caller can report progress. An LLM run can take tens of hours, and
+    without this the whole thing is silent until the very end — leaving no
+    way to tell a working run from a hung one.
+    """
     started_at = time.strftime("%Y-%m-%dT%H:%M:%S")
     run_id = _make_run_id(agent_name, model, cfg.tag)
     seeds = cfg.seeds()
@@ -226,10 +233,24 @@ def run_eval(
         return run_episode(agent_factory(), seed, cfg)
 
     if cfg.concurrency > 1:
+        results_by_seed: Dict[int, EpisodeResult] = {}
         with ThreadPoolExecutor(max_workers=cfg.concurrency) as pool:
-            results = list(pool.map(_one, seeds))
+            futures = {pool.submit(_one, seed): seed for seed in seeds}
+            for done, future in enumerate(as_completed(futures), 1):
+                seed = futures[future]
+                result = future.result()
+                results_by_seed[seed] = result
+                if on_episode is not None:
+                    on_episode(done, len(seeds), result)
+        # keep the caller's seed order, not completion order
+        results = [results_by_seed[seed] for seed in seeds]
     else:
-        results = [_one(seed) for seed in seeds]
+        results = []
+        for done, seed in enumerate(seeds, 1):
+            result = _one(seed)
+            results.append(result)
+            if on_episode is not None:
+                on_episode(done, len(seeds), result)
 
     return RunResult(
         run_id=run_id,
@@ -296,6 +317,7 @@ def resume_eval(
     cfg: EvalConfig,
     agent_name: str,
     model: Optional[str] = None,
+    on_episode: Optional[Callable[[int, int, "EpisodeResult"], None]] = None,
 ) -> RunResult:
     """Finish an interrupted run: keep finished episodes, resume the rest.
 
@@ -344,10 +366,20 @@ def resume_eval(
         )
 
     if cfg.concurrency > 1:
+        resumed_by_seed: Dict[int, EpisodeResult] = {}
         with ThreadPoolExecutor(max_workers=cfg.concurrency) as pool:
-            results = list(pool.map(_one, seeds))
+            futures = {pool.submit(_one, seed): seed for seed in seeds}
+            for done, future in enumerate(as_completed(futures), 1):
+                resumed_by_seed[futures[future]] = future.result()
+                if on_episode is not None:
+                    on_episode(done, len(seeds), resumed_by_seed[futures[future]])
+        results = [resumed_by_seed[seed] for seed in seeds]
     else:
-        results = [_one(seed) for seed in seeds]
+        results = []
+        for done, seed in enumerate(seeds, 1):
+            results.append(_one(seed))
+            if on_episode is not None:
+                on_episode(done, len(seeds), results[-1])
 
     return RunResult(
         run_id=run_id,

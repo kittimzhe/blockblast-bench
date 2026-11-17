@@ -17,6 +17,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 from typing import List, Optional
 
@@ -151,17 +152,35 @@ def cmd_run(args) -> int:
     print(
         f"# run: agent={args.agent}" + (f" model={model}" if model else "")
         + f" episodes={cfg.episodes} seeds={cfg.seed_base}..{cfg.seed_base + cfg.episodes - 1}"
-        + (f" tag={cfg.tag}" if cfg.tag else "")
+        + (f" tag={cfg.tag}" if cfg.tag else ""),
+        flush=True,
     )
+    started = time.monotonic()
+
+    def _progress(done: int, total: int, ep) -> None:
+        # An LLM run can last tens of hours; without a live line there is no
+        # way to tell a working run from a hung one. flush=True because a
+        # piped stdout is block-buffered and would swallow these until exit.
+        elapsed = time.monotonic() - started
+        eta = (elapsed / done) * (total - done) if done else 0.0
+        print(
+            f"  [{done:>3}/{total}] seed {ep.seed} -> {ep.score:>6} pts "
+            f"({ep.moves} moves, {ep.reason}) | elapsed {_hms(elapsed)} "
+            f"| eta {_hms(eta)}",
+            flush=True,
+        )
+
     if args.resume:
         prior = Path(args.resume)
         if not (prior / "summary.json").exists():
             print(f"error: {prior} is not a run directory (no summary.json)", file=sys.stderr)
             return 2
-        print(f"# resuming unfinished episodes from {prior}")
-        run = resume_eval(factory, prior, cfg, agent_name=args.agent, model=model)
+        print(f"# resuming unfinished episodes from {prior}", flush=True)
+        run = resume_eval(factory, prior, cfg, agent_name=args.agent, model=model,
+                          on_episode=_progress)
     else:
-        run = run_eval(factory, cfg, agent_name=args.agent, model=model)
+        run = run_eval(factory, cfg, agent_name=args.agent, model=model,
+                       on_episode=_progress)
     run_dir = write_run(run, cfg.results_dir, save_transcripts=cfg.save_transcripts)
 
     print(f"\n{'seed':>6} {'score':>7} {'moves':>6} {'lines':>6} {'combo':>6} {'inv':>4} {'reason':>14} {'time':>8}")
@@ -236,6 +255,18 @@ def cmd_shapes(args) -> int:
         print(render_shape(shape))
         print()
     return 0
+
+
+def _hms(seconds: float) -> str:
+    """Compact h/m/s duration for progress lines."""
+    seconds = int(max(0, seconds))
+    h, rem = divmod(seconds, 3600)
+    m, sec = divmod(rem, 60)
+    if h:
+        return f"{h}h{m:02d}m"
+    if m:
+        return f"{m}m{sec:02d}s"
+    return f"{sec}s"
 
 
 def _load_transcript(path: Path):

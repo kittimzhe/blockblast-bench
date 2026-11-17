@@ -117,3 +117,24 @@ def test_concurrency_matches_sequential(tmp_path):
     seq = run_eval(factory, seeds, "heuristic")
     par = run_eval(factory, EvalConfig(episodes=5, seed_base=31337, concurrency=5), "heuristic")
     assert [e.score for e in seq.results] == [e.score for e in par.results]
+
+
+def test_run_eval_reports_progress_per_episode():
+    """Long LLM runs need a live signal; on_episode must fire as each ends."""
+    from blockblast.agents import GreedyAgent
+    from blockblast.harness import EvalConfig, run_eval
+
+    seen = []
+    cfg = EvalConfig(episodes=4, seed_base=2024, concurrency=2)
+    run = run_eval(lambda: GreedyAgent(), cfg, agent_name="greedy",
+                   on_episode=lambda done, total, ep: seen.append((done, total, ep.seed)))
+
+    assert len(seen) == 4
+    assert [d for d, _, _ in seen] == [1, 2, 3, 4]   # monotonic counter
+    assert all(t == 4 for _, t, _ in seen)
+    assert {s for _, _, s in seen} == set(cfg.seeds())
+
+    # progress fires in completion order, but results must stay seed-ordered:
+    # run_eval collects futures with as_completed and re-sorts before return
+    assert [e.seed for e in run.results] == cfg.seeds()
+    assert [e.seed for e in run.results] == sorted(e.seed for e in run.results)
