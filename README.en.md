@@ -74,11 +74,12 @@ The dip was pure sampling noise: beam-80's standard error is +/-290 at 50 episod
 
 | | direct JSON | reasoning | |
 |---|---:|---:|---|
-| mean | 416.8 | **446.2** | +7% |
+| mean (the 10 paired seeds) | 416.8 | **446.2** | +7%, but see the test below |
 | median | **405.0** | 346.0 | -15% |
-| completion rate | **100%** | 90% | 1 episode timed out |
-| **invalid rate** | 0.0126 | **0.0019** | **6.6x lower** |
-| tokens/move | **7895** | 11814 | **1.50x cost** |
+| **invalid rate** | 0.0111 (16/1438) | **0.0019** (1/520) | **5.8x lower**, p = 0.055 |
+| tokens/move | **7829** | 11814 | **1.51x cost** |
+
+> The invalid-rate row pools all 23 clean direct episodes (1438 moves); the score rows use only the 10 seeds both conditions played, because scores must be compared pairwise while invalid rate is a per-move statistic that only gets sharper with more data.
 
 Because the environment is deterministic both runs played *the exact same 10 games*, so each seed forms a matched pair and the per-seed difference cancels the huge seed-to-seed variance:
 
@@ -93,7 +94,9 @@ exact sign test   : p = 1.000
 
 **One effect does point clearly in one direction**: invalid placements fall from 0.0126 to 0.0019 (**6.6x**, Fisher exact p = 0.059). Reasoning space appears to improve *instruction following and spatial self-checking* rather than strategic depth - at 1.5x the token cost plus one timeout (the longest single game ran 8.9 hours).
 
-Stated honestly: p = 0.059 is only *near* significance and n=9 cannot settle it; confirming this needs a larger sample or more models. Reproduce with:
+**Why this is where it stops**: growing the direct side from 10 to 23 clean episodes moved the invalid-rate test from p = 0.059 to **p = 0.055** - still short of 0.05. Balancing the reasoning side needs ~20 more episodes, which measured out at **20-60 hours** with a 35% request-retry rate that would likely truncate many of them again.
+
+So this is reported as what it is: **a directionally clear but statistically unconfirmed observation (p = 0.055, n=9 paired)**, not a settled result. The no-score-difference finding, by contrast, is robust (CI straddles zero, p = 1.000). Better to record an edge effect honestly than to keep sampling until it crosses a threshold. Reproduce with:
 
 ```bash
 python3 examples/compare_runs.py \
